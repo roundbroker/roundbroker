@@ -1,0 +1,9 @@
+marshmallow
+marshmallow-sqlalchemy
+flask
+flask_marshmallow
+flask_migrate
+flask_sqlalchemy
+sseclient-py
+GitHub-Flask
+webargs

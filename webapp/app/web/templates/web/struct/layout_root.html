@@ -1,0 +1,48 @@
+{% extends 'web/struct/layout.html' %}
+
+{% block nav %}
+{% if not g.user %}
+<ul>
+  <li>
+    <a href="#top" id="top-link" class="skel-layers-ignoreHref">
+      <span class="icon fa-home">Welcome</span>
+    </a>
+  </li>
+  <li>
+    <a href="#howitworks" id="howitworks-link" class="skel-layers-ignoreHref">
+      <span class="icon fa-info-circle">How It Works</span>
+    </a>
+  </li>
+  <li>
+    <a href="#usecases" id="usercases-link" class="skel-layers-ignoreHref">
+      <span class="icon fa-book">Usecases</span>
+    </a>
+  </li>
+</ul>
+{% else %}
+<ul>
+  <li>
+    <a href="#top" id="top-link" class="skel-layers-ignoreHref">
+      <span class="icon fa-home">Dashboard</span>
+    </a>
+  </li>
+  <li>
+    <a href="#pivots" id="pivots-link" class="skel-layers-ignoreHref">
+      <span class="icon fa-th">API Pivots</span>
+    </a>
+  </li>
+  <li>
+    <a href="#account" id="account-link" class="skel-layers-ignoreHref">
+      <span class="icon fa-user">Account</span>
+    </a>
+  </li>
+  <li>
+    <a href="#contact" id="contact-link" class="skel-layers-ignoreHref">
+      <span class="icon fa-envelope">Contact</span>
+    </a>
+  </li>
+</ul>
+{% endif %}
+{% endblock %}
+
+	

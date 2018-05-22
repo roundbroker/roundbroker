@@ -1,0 +1,30 @@
+{% extends 'web/struct/layout.html' %}
+
+{% block nav %}
+{% if g.user %}
+<ul>
+  <li>
+    <a href="{{ url_for('web.index') }}" id="top-link" class="skel-layers-ignoreHref">
+      <span class="icon fa-chevron-circle-left">Back</span>
+    </a>
+  </li>
+  <li style="padding-left:20px">
+    <a href="#summary" id="summary-link" class="skel-layers-ignoreHref">
+      <span class="icon fa-info-circle">Summary</span>
+    </a>
+  </li>
+  <li style="padding-left:20px">
+    <a href="#producers" id="producers-link" class="skel-layers-ignoreHref">
+      <span class="icon fa-pencil">Producers</span>
+    </a>
+  </li>
+  <li style="padding-left:20px">
+    <a href="#consumers" id="consumers-link" class="skel-layers-ignoreHref">
+      <span class="icon fa-exchange">Consumers</span>
+    </a>
+  </li>
+</ul>
+{% endif %}
+{% endblock %}
+
+	

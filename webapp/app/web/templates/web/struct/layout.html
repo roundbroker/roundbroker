@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+
+
+<html>
+  <head>
+    <title>APIPivot</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--[if lte IE 8]><script src="{{ url_for('.static', filename='assets/js/ie/html5shiv.js') }}"></script><![endif]-->
+    <link rel="stylesheet" href="{{ url_for('.static', filename='assets/css/main.css') }}" />
+    <!--[if lte IE 8]><link rel="stylesheet" href="{{ url_for('.static', filename='assets/css/ie8.css') }}" /><![endif]-->
+    <!--[if lte IE 9]><link rel="stylesheet" href="{{ url_for('.static', filename='assets/css/ie9.css') }}" /><![endif]-->
+  </head>
+
+  <body>
+    <div id="header">
+      
+      <div class="top">
+	
+	<div id="logo">
+	  {% if not g.user %}
+	  <span class="image avatar48"><img src="{{ url_for('.static', filename='images/avatar.jpg') }}" alt="" /></span>
+	  <h1 id="title"><a href="{{ url_for('web.login_github') }}">Sign-In <i class="icon fa-github"></i></a></h1>
+	  <p>Intergalactic Traveler</p>
+	  {% else %}	  
+	  <span class="image avatar48"><img src="{{ url_for('.static', filename='images/avatar.jpg') }}" alt="" /></span>
+	  <h1 id="title">{{ g.user.name }}</h1>
+	  <p>Hyperspace Engineer <a href="{{ url_for('web.logout')}}"><i class="icon fa-sign-out"></i></a></p>
+	  {% endif %}
+	</div>
+
+	<nav id="nav">
+	  {% block nav %}{% endblock %}
+	</nav>
+	
+      </div>
+
+      <div class="bottom">
+	<ul class="icons">
+	  <li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
+	  <li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
+	  <li><a href="#" class="icon fa-github"><span class="label">Github</span></a></li>
+	  <li><a href="#" class="icon fa-dribbble"><span class="label">Dribbble</span></a></li>
+	  <li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
+	</ul>
+      </div>
+      
+    </div>
+
+    <div id="main">
+      {% block body %}{% endblock %}
+    </div>
+
+    <div id="footer">
+      <ul class="copyright">
+	<li>&copy; APIPivot, all rights reserved.</li>
+      </ul>
+    </div>
+    <script src="{{ url_for('.static', filename='assets/js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('.static', filename='assets/js/jquery.scrolly.min.js') }}"></script>
+    <script src="{{ url_for('.static', filename='assets/js/jquery.scrollzer.min.js') }}"></script>
+    <script src="{{ url_for('.static', filename='assets/js/skel.min.js') }}"></script>
+    <script src="{{ url_for('.static', filename='assets/js/util.js') }}"></script>
+    <!--[if lte IE 8]><script src="{{ url_for('.static', filename='assets/js/ie/respond.min.js') }}"></script><![endif]-->
+    <script src="{{ url_for('.static', filename='assets/js/main.js') }}"></script>
+  </body>
+
+</html>

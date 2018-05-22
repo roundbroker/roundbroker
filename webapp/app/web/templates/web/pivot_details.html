@@ -1,0 +1,79 @@
+{% extends 'web/struct/layout_pivot.html' %}
+{% block body %}
+
+<section id="summary" class="two">
+  <div class="container">
+    <header>
+      <h2>Summary</h2>
+    </header>
+    <ul>
+      <li>Name: {{ pivot.name }}</li>
+      <li>Number API Calls: > 10k</li>
+      <li>Description: {{ pivot.description }}</li>
+    </ul>
+  </div>
+</section>
+
+<section id="producers" class="three">
+  <div class="container">
+    <header>
+      <h2>Producers</h2>
+      <a href="#"><i class="fa fa-plus">New producer</i></a>      
+    </header>    
+    <ul>
+      {% for producer in pivot.producers() %}
+
+      <div class="panel panel-primary" style="border:1px solid #000000">
+	<div class="panel-heading">
+	  <h3 class="panel-title pull-left">Producer #{{ producer.id }}</h3>
+	  <a href="#"><i class="fa fa-pencil"></i></a>
+	  <a href="#"><i class="fa fa-trash"></i></a>
+	</div>
+	<div class="panel-body">
+	  <p>{{ producer.description }}</p>
+	  <p>
+	    <ul>
+	      <li><strong>URL: </strong> {{ producer.url }}</li>
+	      <li><strong>Type: </strong>github</li>
+	      <li><strong>Stats: </strong><a href="#">12,098 messages</a> (<a href="#">123 refused</a>)</li>
+	    </ul>
+	  </p>
+	</div>
+      </div>
+      {% endfor %}
+    </ul>
+    </div>
+</section>
+
+<section id="consumers" class="four">
+  <div class="container">
+    <header>
+      <h2>Consumers</h2>
+      <a href="#"><i class="fa fa-plus">New consumer</i></a>
+    </header>
+    
+    {% for consumer in pivot.consumers() %}
+      <div class="panel panel-primary" style="border:1px solid #000000">
+	<div class="panel-heading">
+	  <h3 class="panel-title pull-left">Consumer #{{ consumer.id }}</h3>
+	  <a href="#"><i class="fa fa-pencil"></i></a>
+	  <a href="#"><i class="fa fa-trash"></i></a>
+	</div>
+	<div class="panel-body">
+	  <p>{{ consumer.description }}</p>
+	  <p>
+	    <ul>
+	      <li><strong>URL: </strong> {{ consumer.url }}</li>
+	      <li><strong>Stats: </strong><a href="#">12,098 messages consumed</a> (<a href="#">123 refused</a>)</li>
+	    </ul>
+	  </p>
+	</div>
+      </div>
+    {% endfor %}
+    
+    </div>
+</section>
+
+
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'web/struct/layout.html' %}
+{% block body %}
+
+
+<section id="pivots" class="two">
+  <div class="container">
+    <header>
+      <h2>New Pivot</h2>
+    </header>
+
+    <p>Vitae natoque dictum etiam semper magnis enim feugiat convallis convallis
+      egestas rhoncus ridiculus in quis risus amet curabitur tempor orci penatibus.
+      Tellus erat mauris ipsum fermentum etiam vivamus eget. Nunc nibh morbi quis
+      fusce hendrerit lacus ridiculus.</p>
+
+    <form>
+      <div class="form-group">
+	<label for="name_newpivot">Name</label>
+	<input type="text" class="form-control" id="name_newpivot" placeholder="my pivot">
+      </div>
+      <div class="form-group">
+	<label for="description_newpivot">Description</label>
+	<textarea class="form-control" id="description_newpivot"></textarea>
+      </div>
+      <button type="submit" class="btn btn-default">Create</button>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

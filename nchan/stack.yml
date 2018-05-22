@@ -1,0 +1,12 @@
+version: '3.1'
+
+services:
+  web:
+    image: nginx-nchan:1.0
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+      - redis-master
+  redis-master:
+    image: redis:3.2
