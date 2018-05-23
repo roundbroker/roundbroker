@@ -28,3 +28,15 @@ The application leverages Github OAuth for user authentication. It requires a `G
 * **Authorization callback URL**: `http://$PUBLIC_DOMAIN$/ui/oauth-github` (you replaced `$PUBLIC_DOMAIN$` by its value)
 
 Once declared on Github, both the obtained `client id` and `client secret` provided by github must be injected in your instance configuration.
+
+
+## Docker compose stack
+
+A Docker compose stack is available and could be used as follow:
+
+    docker-compose build
+    docker-compose up
+
+And you could deploy this app in a Docker Swarm stack:
+
+    docker deploy -c docker-compose.yml turntable
