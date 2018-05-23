@@ -8,7 +8,7 @@ Developed in Python3, it has few library requirements that must be installed pri
     > $ virtualenv venv
     > $ source venv/bin/activate
     (venv) > $ pip install -r requirements.txt
-    (venv) > $ ./turntable.py
+    (venv) > $ FLASK_APP=turntable FLASK_DEBUG="true" flask run --port 4242
 
 It accepts the following environment variable to ease its configuration:
 
@@ -16,8 +16,6 @@ It accepts the following environment variable to ease its configuration:
 | ------------- | ----------- | ------- |
 | `PUBLIC_DOMAIN` | The domain clients can use to contact the web application | de1b6d5a.ngrok.io |
 | `SECRET_KEY`    | A secret key for authentication purposes | fnwbzuUhfleoznihjnJekezuJZIU39n2kj |
-| `LISTEN_HOST`   | The listen IP or Hostname the server binds to | 127.0.0.1 |
-| `LISTEN_PORT`   | A port number the served binds to | 8000 |
 | `DATABASE_URI`  | Full URI of the database | sqlite:// |
 | `GITHUB_CLIENT_ID` | Github OAuth Application Client ID | b1424e2f1cd4e9c2eeb9 |
 | `GITHUB_CLIENT_SECRET` | Gitub OAuth Application Client Secret | LKjqsdkhqldjsqlkdjkqsjk726BHJB3 |
