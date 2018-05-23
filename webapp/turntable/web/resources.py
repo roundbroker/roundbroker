@@ -2,16 +2,14 @@
 
 import uuid
 from datetime import datetime
-
 import requests
-from flask import Flask, request, g, session, redirect, url_for
-from flask import render_template_string, current_app, render_template
-from app.ext.sqlalchemy import db
-from app.ext.github import github
+
+from flask import Flask, request, g, session, redirect, url_for, render_template_string, current_app, render_template
+
 from . import blueprint as web
-from app.models import User
-from app.models import Hook
-from app.models import Pivot
+
+from turntable.extensions import db, github
+from turntable.models import User, Hook, Pivot
 
 @web.before_request
 def before_request():

@@ -2,6 +2,6 @@
 
 from flask import Blueprint
 
-blueprint = Blueprint('hook', __name__, url_prefix='/hook')
+blueprint = Blueprint('pivot', __name__, url_prefix='/pivot')
 
 from . import resources

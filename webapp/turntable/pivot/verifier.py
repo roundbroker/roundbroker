@@ -4,13 +4,6 @@ import json
 import hmac
 import hashlib
 import requests
-from flask import Flask, request, g, session, redirect, url_for
-from flask import render_template_string, current_app
-from app.ext.sqlalchemy import db
-from app.ext.github import github
-from . import blueprint as hook
-from app.models import User
-from app.models import Hook
 
 @hook.route('/github', methods=['POST', 'GET'])
 def new_github_event():
