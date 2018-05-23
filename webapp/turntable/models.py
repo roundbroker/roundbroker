@@ -1,8 +1,7 @@
 # encoding: utf-8
 
 from datetime import datetime
-from app.ext.sqlalchemy import db
-
+from turntable.extensions import db
 
 class Pivot(db.Model):
 

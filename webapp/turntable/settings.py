@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 import os
 
 class Config(object):
@@ -14,7 +12,7 @@ class Config(object):
     HOOK_ROOT_URL = "http://{}/hook".format(PUBLIC_DOMAIN)
 
     # Secret key
-    SECRET_KEY = os.environ.get('APP_SECRET_KEY', 'This is NOT a great secret !')    
+    SECRET_KEY = os.environ.get('APP_SECRET_KEY', 'This is NOT a great secret !')
 
     # Listen host and port
     LISTEN_HOST = os.environ.get('APP_LISTEN_HOST', '127.0.0.1')
