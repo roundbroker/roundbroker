@@ -16,32 +16,15 @@ class Pivot(db.Model):
     created_by = db.Column(db.Integer(), db.ForeignKey('user.id'))    
     created_at = db.Column(db.DateTime(), default=datetime.utcnow(), nullable=False)
     deleted_at = db.Column(db.DateTime(), nullable=True)
-    
-    def producers(self):
-        p1 = Producer()
-        p1.pivot_id = self.id
-        p1.url_path = "jkhjgsqdjhgqjs-qsjdqsd-qksjdqksdkqsdkqsjdkl"
-        p1.name = "github"
-        return [
-            p1
-        ]
-
-    def consumers(self):
-        c1 = Consumer()
-        c1.pivot_id = self.id
-        c1.url_path = "jkhjgsqdjhgqjs-qsjdqsd-qksjdqksdkqsdkqsjdkl"
-        c1.name = "client"
-        return [
-            c1
-        ]
-    
+    producers = db.relationship('Producer', lazy='dynamic')
+    consumers = db.relationship('Consumer', lazy='dynamic')    
 
 class Consumer(db.Model):
 
     __tablename__ = 'consumer'
 
     id = db.Column(db.Integer, primary_key=True)
-    pivot_id = db.Column(db.Integer(), nullable=False)
+    pivot_id = db.Column(db.Integer(), db.ForeignKey('pivot.id'))
     url_path = db.Column(db.String(), nullable=False)
     name = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
@@ -55,7 +38,7 @@ class Producer(db.Model):
     __tablename__ = 'producer'
 
     id = db.Column(db.Integer, primary_key=True)
-    pivot_id = db.Column(db.Integer(), nullable=False)
+    pivot_id = db.Column(db.Integer(), db.ForeignKey('pivot.id'))
     url_path = db.Column(db.String(), nullable=False)
     name = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)

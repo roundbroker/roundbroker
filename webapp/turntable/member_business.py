@@ -2,6 +2,7 @@
 
 from turntable.extensions import db
 from turntable.models import Pivot
+from turntable.models import Producer
 
 class MemberBusiness(object):
 
@@ -31,3 +32,22 @@ class MemberBusiness(object):
 
         return Pivot.query.filter_by(
             uuid=uuid, created_by=self.member.id, deleted=False).one()
+
+    def create_generic_producer(self, pivot_uuid, name, description):
+        """
+        Creates a generic producer on behalf
+        of the current member.
+        """
+
+        pivot = self.get_pivot(uuid=pivot_uuid)
+
+        producer = Producer()
+        producer.pivot_id = pivot.id
+        producer.name = name
+        producer.description = description
+        producer.url_path = name
+
+        db.session.add(producer)
+        db.session.commit()
+        
+        return producer

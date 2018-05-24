@@ -36,63 +36,22 @@
       {% for pivot in g.user.pivots %}
       <div class="4u 12u$(mobile)">
 	<article class="item">
-	    Graphic of the API consomation
+	    (todo) Graphic of the API consomation
 	  <header>
 	    <h3><a href="{{ url_for('web.pivot_details', pivot_uuid=pivot.uuid) }}">{{ pivot.name }}</a></h3>	    
 	  </header>
 	</article>
       </div>
       {% endfor %}
-    </div>
-    
-    <div class="row">
       <div class="4u 12u$(mobile)">
 	<article class="item">
-	    Graphic of the API consomation
+	    New New New New
 	  <header>
-	    <h3><a href="#">/github/sample1</a></h3>	    
-	  </header>
-	</article>
-
-	<article class="item">
-	    Graphic of the API consomation
-	  <header>
-	    <h3><a href="#">/github/sample2</a></h3>	    
+	    <h3><a href="{{ url_for('web.create_pivot') }}">+ New Pivot</a></h3>	    
 	  </header>
 	</article>
       </div>
 
-      <div class="4u 12u$(mobile)">
-	<article class="item">
-	    Graphic of the API consomation
-	  <header>
-	    <h3><a href="#">/github/sample3</a></h3>	    
-	  </header>
-	</article>
-
-	<article class="item">
-	    Graphic of the API consomation
-	  <header>
-	    <h3><a href="#">/github/sample4</a></h3>	    
-	  </header>
-	</article>
-      </div>
-
-      <div class="4u 12u$(mobile)">
-	<article class="item">
-	    Graphic of the API consomation
-	  <header>
-	    <h3><a href="#">/github/sample5</a></h3>	    
-	  </header>
-	</article>
-
-	<article class="item">
-	    Nice image
-	  <header>
-	    <h3><a href="#">New Pivot</a></h3>	    
-	  </header>
-	</article>
-      </div>
     </div>
 
   </div>
