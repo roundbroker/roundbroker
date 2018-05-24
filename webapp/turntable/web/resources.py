@@ -7,9 +7,11 @@ import requests
 from flask import Flask, request, g, session, redirect, url_for, render_template_string, current_app, render_template
 
 from . import blueprint as web
+from .forms import NewPivotForm
 
 from turntable.extensions import db, github
 from turntable.models import User, Hook, Pivot
+from turntable.member_business import MemberBusiness
 
 @web.before_request
 def before_request():
@@ -49,25 +51,29 @@ def logout():
     session.pop('user_id', None)
     return redirect(url_for('web.index'))
 
+@web.route('/pivots/new', methods=['GET', 'POST'])
+def create_pivot():
+    form = NewPivotForm()
+    if form.validate_on_submit():
+        pivot = MemberBusiness(g.user).create_pivot(
+            name=form.name.data,
+            description=form.description.data)
+
+        return redirect(url_for('web.pivot_details', pivot_uuid=pivot.uuid))
+
+    return render_template('web/new_pivot.html', form=form)
 
 @web.route('/pivots/<pivot_uuid>')
 def pivot_details(pivot_uuid):
-    p1 = Pivot()
-    p1.uuid = "helloworld"
-    p1.user_id = g.user.id
-    p1.name = "Sample pivot 1"
-    p1.description = None
-    p1.deleted = False
-    p1.created_at = datetime.utcnow()
-    p1.deleted_at = None
-    
-    return render_template('web/pivot_details.html', pivot=p1)
+    return render_template(
+        'web/pivot_details.html',
+        pivot=MemberBusiness(g.user).get_pivot(pivot_uuid))
 
 
 
 
 @web.route('/pushers')
-def pushers():    
+def pushers():
     t = 'Your repositories:<br />'
     user_repositories = github.get('/user/repos?visibility=public&affiliation=owner')
 
