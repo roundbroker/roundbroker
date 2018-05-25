@@ -4,11 +4,11 @@
 <section id="summary" class="two">
   <div class="container">
     <header>
-      <h2>Summary</h2>
+      <h2>Pivot Summary</h2>
     </header>
     <ul>
       <li>Name: {{ pivot.name }}</li>
-      <li>Number API Calls: > 10k</li>
+      <li>Number API Calls: > 10k (todo)</li>
       <li>Description: {{ pivot.description }}</li>
     </ul>
   </div>
@@ -18,10 +18,10 @@
   <div class="container">
     <header>
       <h2>Producers</h2>
-      <a href="#"><i class="fa fa-plus">New producer</i></a>      
+      <a href="{{ url_for('web.create_producer', pivot_uuid=pivot.uuid) }}"><i class="fa fa-plus">New producer</i></a>      
     </header>    
     <ul>
-      {% for producer in pivot.producers() %}
+      {% for producer in pivot.producers %}
 
       <div class="panel panel-primary" style="border:1px solid #000000">
 	<div class="panel-heading">
@@ -49,10 +49,10 @@
   <div class="container">
     <header>
       <h2>Consumers</h2>
-      <a href="#"><i class="fa fa-plus">New consumer</i></a>
+      <a href="{{ url_for('web.create_consumer', pivot_uuid=pivot.uuid) }}"><i class="fa fa-plus">New consumer</i></a>
     </header>
     
-    {% for consumer in pivot.consumers() %}
+    {% for consumer in pivot.consumers %}
       <div class="panel panel-primary" style="border:1px solid #000000">
 	<div class="panel-heading">
 	  <h3 class="panel-title pull-left">Consumer #{{ consumer.id }}</h3>

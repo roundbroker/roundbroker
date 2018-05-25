@@ -1,7 +1,7 @@
 """init
 
 Revision ID: 2ff95e358238
-Revises: 
+Revises:
 Create Date: 2018-03-04 20:44:01.227395
 
 """
@@ -31,7 +31,8 @@ def upgrade():
     )
     op.create_table('pivot',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('uuid', sa.String(), nullable=False),
+    sa.Column('created_by', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
     sa.Column('deleted', sa.Boolean(), nullable=False),
@@ -40,6 +41,14 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('producer',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('pivot_id', sa.Integer(), nullable=False),
+    sa.Column('url_path', sa.String(), nullable=False),
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('consumer',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('pivot_id', sa.Integer(), nullable=False),
     sa.Column('url_path', sa.String(), nullable=False),

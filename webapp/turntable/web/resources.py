@@ -7,9 +7,11 @@ import requests
 from flask import Flask, request, g, session, redirect, url_for, render_template_string, current_app, render_template
 
 from . import blueprint as web
+from .forms import NewPivotForm, NewGenericProducerForm
 
 from turntable.extensions import db, github
 from turntable.models import User, Hook, Pivot
+from turntable.member_business import MemberBusiness
 
 @web.before_request
 def before_request():
@@ -17,21 +19,12 @@ def before_request():
     if 'user_id' in session:
         g.user = User.query.get(session['user_id'])
 
-
 @web.route('/')
 def index():
     if g.user:
         return render_template('web/index_member.html')
     else:
         return render_template('web/index_visitor.html')
-# if g.user:
-#         t = 'Hello {{ g.user.username }}<br />' \
-#             '<a href="{{ url_for("web.pushers") }}">See your pushers</a><br />' \
-#             '<a href="{{ url_for("web.logout") }}">Logout</a>'
-#     else:
-#         t = 'Hello! <a href="{{ url_for("web.login") }}">Login</a>'    
-
-#     return render_template_string(t)
 
 @web.route('/login')
 def login():
@@ -49,25 +42,62 @@ def logout():
     session.pop('user_id', None)
     return redirect(url_for('web.index'))
 
+@web.route('/pivots/new', methods=['GET', 'POST'])
+def create_pivot():
+    form = NewPivotForm()
+    if form.validate_on_submit():
+        pivot = MemberBusiness(g.user).create_pivot(
+            name=form.name.data,
+            description=form.description.data)
+
+        return redirect(url_for('web.pivot_details', pivot_uuid=pivot.uuid))
+
+    return render_template('web/new_pivot.html', form=form)
 
 @web.route('/pivots/<pivot_uuid>')
 def pivot_details(pivot_uuid):
-    p1 = Pivot()
-    p1.uuid = "helloworld"
-    p1.user_id = g.user.id
-    p1.name = "Sample pivot 1"
-    p1.description = None
-    p1.deleted = False
-    p1.created_at = datetime.utcnow()
-    p1.deleted_at = None
-    
-    return render_template('web/pivot_details.html', pivot=p1)
+    return render_template(
+        'web/pivot_details.html',
+        pivot=MemberBusiness(g.user).get_pivot(pivot_uuid))
 
+@web.route('/pivots/<pivot_uuid>/consumers/new')
+def create_consumer(pivot_uuid):
+    return render_template(
+        'web/new_consumer.html',
+        pivot=MemberBusiness(g.user).get_pivot(pivot_uuid))
 
+@web.route('/pivots/<pivot_uuid>/producers/new')
+def create_producer(pivot_uuid):
+    return render_template(
+        'web/new_producer.html',
+        pivot=MemberBusiness(g.user).get_pivot(pivot_uuid))
+
+@web.route('/pivots/<pivot_uuid>/producers/new/generic', methods=['GET', 'POST'])
+def create_generic_producer(pivot_uuid):
+    form = NewGenericProducerForm()
+    if form.validate_on_submit():
+        MemberBusiness(g.user).create_generic_producer(
+            pivot_uuid=pivot_uuid,
+            name=form.name.data,
+            description=form.description.data)
+
+        return redirect(url_for(
+            'web.pivot_details', pivot_uuid=pivot_uuid))
+
+    return render_template(
+        'web/new_generic_producer.html',
+        pivot=MemberBusiness(g.user).get_pivot(pivot_uuid),
+        form=form)
+
+@web.route('/pivots/<pivot_uuid>/producers/new/github')
+def create_github_producer(pivot_uuid):
+    return render_template(
+        'web/new_github_producer.html',
+        pivot=MemberBusiness(g.user).get_pivot(pivot_uuid))
 
 
 @web.route('/pushers')
-def pushers():    
+def pushers():
     t = 'Your repositories:<br />'
     user_repositories = github.get('/user/repos?visibility=public&affiliation=owner')
 
@@ -75,7 +105,7 @@ def pushers():
         t += "#{} {}".format(repository['id'], repository['full_name'])
 
         t += '<a href="{{ url_for("web.repository", owner="'+repository['owner']['login']+'", name="'+repository['name']+'") }}">Configure</a><br />'
-    
+
     print(user_repositories[0].keys())
     return render_template_string(t)
 
@@ -94,12 +124,12 @@ def repository(owner, name):
             owner=owner,
             name=name,
             hook_id=hook.github_hook_id))
-        
+
         t += "<h3>Configuration</h3>"
         t += str(hook_info)
         t += "<h3>Received Events</h3>"
 
-        nchan_uri = "{}/{}".format(current_app.config['NCHAN_PUBLISH_ROOT_URL'], hook.subscribe_uuid)        
+        nchan_uri = "{}/{}".format(current_app.config['NCHAN_PUBLISH_ROOT_URL'], hook.subscribe_uuid)
         response = requests.get(nchan_uri, headers={"Accept": "text/json"}, data=request.data)
 
         if response.status_code == 200:
@@ -113,7 +143,7 @@ def repository(owner, name):
             t += "</ul>"
         else:
             t += "No event found"
-    
+
     return render_template_string(t)
 
 @web.route('/r/<owner>/<name>/events')
@@ -121,9 +151,9 @@ def repository_events(owner, name):
 
     user = g.user
     hook = Hook.query.filter_by(user_id=user.id, repo_owner=owner, repo_name=name).first()
-    
+
     subscribe_url = "{}/{}".format(current_app.config['NCHAN_SUBSCRIBE_ROOT_URL'], hook.subscribe_uuid)
-    
+
     t = """
     <h1>Repository {owner}/{name}</h1><br />
     <div id="event"></div>
@@ -151,7 +181,7 @@ def add_hook(owner, name):
     t += '<h2>Add a Hook</h2><br />'
 
     hook_secret_key = "helloworld"
-    
+
     new_hook_data = {
         'name': 'web',
         'config': {
@@ -179,13 +209,13 @@ def add_hook(owner, name):
 
     db.session.add(hook)
     db.session.commit()
-    
+
     return redirect(url_for('web.repository', owner=owner, name=name))
 
 
 @web.route('/refresh')
 def refresh():
-    
+
     user = g.user
     if user is not None:
         # fetch user details
@@ -198,14 +228,14 @@ def refresh():
         user.nb_following = int(user_details.get('following', 0))
         user.company = user_details.get('company', None)
         user.avatar_url = user_details.get('avatar_url', None)
-        db.session.commit()    
-    
+        db.session.commit()
+
     return redirect(url_for('web.index'))
-    
+
 @web.route('/oauth-github')
 @github.authorized_handler
 def authorized(access_token):
-    
+
     next_url = request.args.get('next') or url_for('web.refresh')
     if access_token is None:
         return redirect(next_url)
@@ -215,7 +245,7 @@ def authorized(access_token):
         user = User(access_token)
         db.session.add(user)
 
-    user.github_access_token = access_token    
+    user.github_access_token = access_token
     db.session.commit()
     session['user_id'] = user.id
 
