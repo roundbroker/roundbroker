@@ -25,7 +25,9 @@
 
       <div class="panel panel-primary" style="border:1px solid #000000">
 	<div class="panel-heading">
-	  <h3 class="panel-title pull-left">Producer #{{ producer.id }}</h3>
+	  <a href="{{ url_for('web.producer_details', pivot_uuid=pivot.uuid, producer_uuid=producer.uuid) }}">
+	    <h3 class="panel-title pull-left">Producer #{{ producer.id }}</h3>
+	  </a>
 	  <a href="#"><i class="fa fa-pencil"></i></a>
 	  <a href="#"><i class="fa fa-trash"></i></a>
 	</div>
