@@ -10,7 +10,10 @@ class NewPivotForm(FlaskForm):
     submit = SubmitField('Create Pivot')
 
 class NewGenericProducerForm(FlaskForm):
-
     name = StringField('Name', validators=[DataRequired()])
     description = TextAreaField('Description', validators=[DataRequired()])
     submit = SubmitField('Create Producer')
+
+class NewGithubProducerForm(NewGenericProducerForm):
+    # no differences yet with generic producer
+    pass

@@ -1,0 +1,20 @@
+{% extends 'web/struct/layout_pivot.html' %}
+{% block body %}
+
+<section id="summary" class="two">
+  <div class="container">
+    <header>
+      <h2>Github Producer Summary</h2>
+    </header>
+    <ul>
+      <li>Name: {{ producer.name }}</li>
+      <li>Type: {{ producer.ptype }}</li>      
+      <li>Description: {{ producer.description }}</li>
+      <li>URL: {{ producer.url }}</li>
+      <li>Secret: {{ producer.github_secret }}</li>
+    </ul>
+  </div>
+</section>
+
+
+{% endblock %}

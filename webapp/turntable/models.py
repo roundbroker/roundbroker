@@ -16,8 +16,8 @@ class Pivot(db.Model):
     created_by = db.Column(db.Integer(), db.ForeignKey('user.id'))    
     created_at = db.Column(db.DateTime(), default=datetime.utcnow(), nullable=False)
     deleted_at = db.Column(db.DateTime(), nullable=True)
-    producers = db.relationship('Producer', lazy='dynamic')
-    consumers = db.relationship('Consumer', lazy='dynamic')    
+    producers = db.relationship('Producer', lazy='dynamic', backref='pivot')
+    consumers = db.relationship('Consumer', lazy='dynamic', backref='pivot')    
 
 class Consumer(db.Model):
 
@@ -46,10 +46,17 @@ class Producer(db.Model):
     description = db.Column(db.String(), nullable=True)
     ptype = db.Column(db.String(), nullable=False)
 
+    def is_github(self):
+        return self.ptype == 'github'
+    
     @property
     def url(self):
         return 'apipivots.io/pi/{}'.format(self.url_path)
 
+    @property
+    def github_secret(self):
+        return 'my-super-secret'
+    
 class Hook(db.Model):
 
     __tablename__ = 'hook'

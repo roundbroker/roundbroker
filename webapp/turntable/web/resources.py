@@ -7,7 +7,7 @@ import requests
 from flask import Flask, request, g, session, redirect, url_for, render_template_string, current_app, render_template
 
 from . import blueprint as web
-from .forms import NewPivotForm, NewGenericProducerForm
+from .forms import NewPivotForm, NewGenericProducerForm, NewGithubProducerForm
 
 from turntable.extensions import db, github
 from turntable.models import User, Hook, Pivot
@@ -76,24 +76,50 @@ def create_producer(pivot_uuid):
 def create_generic_producer(pivot_uuid):
     form = NewGenericProducerForm()
     if form.validate_on_submit():
-        MemberBusiness(g.user).create_generic_producer(
+        producer = MemberBusiness(g.user).create_generic_producer(
             pivot_uuid=pivot_uuid,
             name=form.name.data,
             description=form.description.data)
 
         return redirect(url_for(
-            'web.pivot_details', pivot_uuid=pivot_uuid))
+            'web.producer_details', pivot_uuid=pivot_uuid, producer_uuid=producer.uuid))
 
     return render_template(
         'web/new_generic_producer.html',
         pivot=MemberBusiness(g.user).get_pivot(pivot_uuid),
         form=form)
 
-@web.route('/pivots/<pivot_uuid>/producers/new/github')
+@web.route('/pivots/<pivot_uuid>/producers/new/github', methods=['GET', 'POST'])
 def create_github_producer(pivot_uuid):
+    form = NewGithubProducerForm()
+    if form.validate_on_submit():
+        producer = MemberBusiness(g.user).create_github_producer(
+            pivot_uuid=pivot_uuid,
+            name=form.name.data,
+            description=form.description.data)
+
+        return redirect(url_for(
+            'web.producer_details', pivot_uuid=pivot_uuid, producer_uuid=producer.uuid))
+
     return render_template(
         'web/new_github_producer.html',
-        pivot=MemberBusiness(g.user).get_pivot(pivot_uuid))
+        pivot=MemberBusiness(g.user).get_pivot(pivot_uuid),
+        form=form)
+
+@web.route('/pivots/<pivot_uuid>/producers/<producer_uuid>')
+def producer_details(pivot_uuid, producer_uuid):
+
+    producer = MemberBusiness(g.user).get_producer(producer_uuid=producer_uuid)
+
+    if producer.is_github():
+        return render_template(
+            'web/producer_github_details.html',
+            producer=producer)
+
+    return render_template(
+        'web/producer_details.html',
+        producer=producer)
+
 
 
 @web.route('/pushers')
