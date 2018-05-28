@@ -25,6 +25,7 @@ class Consumer(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     pivot_id = db.Column(db.Integer(), db.ForeignKey('pivot.id'))
+    uuid = db.Column(db.String(32), nullable=False, default=str(uuid.uuid4()))        
     url_path = db.Column(db.String(), nullable=False)
     name = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
@@ -39,9 +40,11 @@ class Producer(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     pivot_id = db.Column(db.Integer(), db.ForeignKey('pivot.id'))
+    uuid = db.Column(db.String(32), nullable=False, default=str(uuid.uuid4()))    
     url_path = db.Column(db.String(), nullable=False)
     name = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
+    ptype = db.Column(db.String(), nullable=False)
 
     @property
     def url(self):
