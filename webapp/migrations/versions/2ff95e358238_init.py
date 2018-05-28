@@ -43,14 +43,17 @@ def upgrade():
     op.create_table('producer',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('pivot_id', sa.Integer(), nullable=False),
+    sa.Column('uuid', sa.String(), nullable=False),    
     sa.Column('url_path', sa.String(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
+    sa.Column('ptype', sa.String(), nullable=False),    
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('consumer',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('pivot_id', sa.Integer(), nullable=False),
+    sa.Column('uuid', sa.String(), nullable=False),    
     sa.Column('url_path', sa.String(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
