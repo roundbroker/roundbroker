@@ -3,7 +3,7 @@
 
 <html>
   <head>
-    <title>APIPivot</title>
+    <title>WebPivot</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!--[if lte IE 8]><script src="{{ url_for('.static', filename='assets/js/ie/html5shiv.js') }}"></script><![endif]-->
@@ -50,11 +50,11 @@
     <div id="main">
       {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
-      <ul class=flashes>
 	{% for category, message in messages %}
-	<li class="{{ category }}">{{ message }}</li>
+	<div class="alert alert-{{ category }} alert-dismissible" role="alert">
+	  {{ message }}
+	</div>
 	{% endfor %}
-      </ul>
       {% endif %}
       {% endwith %}
 
