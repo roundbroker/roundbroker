@@ -20,7 +20,7 @@
 	<div id="logo">
 	  {% if not g.user %}
 	  <span class="image avatar48"><img src="{{ url_for('.static', filename='images/avatar.jpg') }}" alt="" /></span>
-	  <h1 id="title"><a href="{{ url_for('web.login_github') }}">Sign-In <i class="icon fa-github"></i></a></h1>
+	  <h1 id="title"><a href="{{ url_for('web.login') }}">Sign-In <i class="icon fa-sign-in"></i></a></h1>
 	  <p>Intergalactic Traveler</p>
 	  {% else %}
 	  <span class="image avatar48"><img src="{{ url_for('.static', filename='images/avatar.jpg') }}" alt="" /></span>
