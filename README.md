@@ -39,4 +39,4 @@ A Docker compose stack is available and could be used as follow:
 
 And you could deploy this app in a Docker Swarm stack:
 
-    docker deploy -c docker-compose.yml turntable
+    docker deploy -c docker-compose.yaml turntable
