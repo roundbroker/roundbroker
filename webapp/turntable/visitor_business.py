@@ -1,7 +1,10 @@
 # encoding: utf-8
 
+from sqlalchemy.exc import IntegrityError
+
 from turntable.extensions import db
 from turntable.models import User
+from turntable import exceptions
 
 class VisitorBusiness(object):
 

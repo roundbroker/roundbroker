@@ -22,6 +22,14 @@ class Pivot(db.Model):
     producers = db.relationship('Producer', lazy='dynamic', backref='pivot')
     consumers = db.relationship('Consumer', lazy='dynamic', backref='pivot')
 
+    @property
+    def nb_producers(self):
+        return len(list(self.producers))
+
+    @property
+    def nb_consumers(self):
+        return len(list(self.consumers))
+
 class Consumer(db.Model):
 
     __tablename__ = 'consumer'
