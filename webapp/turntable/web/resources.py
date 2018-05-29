@@ -13,6 +13,7 @@ from turntable.extensions import db, github
 from turntable.models import User, Hook, Pivot
 from turntable.member_business import MemberBusiness
 from turntable.visitor_business import VisitorBusiness
+from turntable import exceptions
 
 @web.before_request
 def before_request():
@@ -32,13 +33,19 @@ def signup():
     form = SignUpWithEmailForm()
     if form.validate_on_submit():
 
-        user = VisitorBusiness().create_user(
-            username=form.username.data,
-            email=form.email.data,
-            password=form.password.data)
+        try:
+            user = VisitorBusiness().create_user(
+                username=form.username.data,
+                email=form.email.data,
+                password=form.password.data)
+            flash('Congratulations, you are now a registered user!')
+            next_url = url_for('web.login')
+        except exceptions.DuplicateUserException:
+            flash('User email already reserved!', 'error')
+            next_url = url_for('web.signup')
 
-        flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('web.login'))
+
+        return redirect(next_url)
     else:
         return render_template('web/sign-up.html', form=form)
 

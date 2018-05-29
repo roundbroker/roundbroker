@@ -13,14 +13,20 @@ class VisitorBusiness(object):
 
     def create_user(self, username, email, password):
         """
-        Creates a user with the specified info
+        Creates a user with the specified info.
+
+        :raises turntable.exceptions.DuplicateUserException: if equivalent user already exists
         """
 
         user = User(username=username, email=email)
         user.set_password(password)
 
         db.session.add(user)
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except IntegrityError:
+            raise exceptions.DuplicateUserException()
 
         return user
 
