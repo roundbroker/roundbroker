@@ -4,14 +4,15 @@ import uuid
 from datetime import datetime
 import requests
 
-from flask import Flask, request, g, session, redirect, url_for, render_template_string, current_app, render_template
+from flask import Flask, request, g, session, redirect, url_for, render_template_string, current_app, render_template, flash
 
 from . import blueprint as web
-from .forms import NewPivotForm, NewGenericProducerForm, NewGithubProducerForm
+from .forms import NewPivotForm, NewGenericProducerForm, NewGithubProducerForm, SignUpWithEmailForm, LoginWithEmailForm
 
 from turntable.extensions import db, github
 from turntable.models import User, Hook, Pivot
 from turntable.member_business import MemberBusiness
+from turntable.visitor_business import VisitorBusiness
 
 @web.before_request
 def before_request():
@@ -26,9 +27,30 @@ def index():
     else:
         return render_template('web/index_visitor.html')
 
-@web.route('/login')
+@web.route('/sign-up', methods=['GET', 'POST'])
+def signup():
+    form = SignUpWithEmailForm()
+    if form.validate_on_submit():
+
+        user = VisitorBusiness().create_user(
+            username=form.username.data,
+            email=form.email.data,
+            password=form.password.data)
+
+        flash('Congratulations, you are now a registered user!')
+        return redirect(url_for('web.login'))
+    else:
+        return render_template('web/sign-up.html', form=form)
+
+@web.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('web/login.html')
+    form = LoginWithEmailForm()
+    if form.validate_on_submit():
+
+        flash('Not yet implemented')
+        return redirect(url_for('web.index'))
+    else:
+        return render_template('web/login.html', form=form)
 
 @web.route('/login/github')
 def login_github():

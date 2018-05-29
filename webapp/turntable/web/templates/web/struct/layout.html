@@ -14,15 +14,15 @@
 
   <body>
     <div id="header">
-      
+
       <div class="top">
-	
+
 	<div id="logo">
 	  {% if not g.user %}
 	  <span class="image avatar48"><img src="{{ url_for('.static', filename='images/avatar.jpg') }}" alt="" /></span>
 	  <h1 id="title"><a href="{{ url_for('web.login_github') }}">Sign-In <i class="icon fa-github"></i></a></h1>
 	  <p>Intergalactic Traveler</p>
-	  {% else %}	  
+	  {% else %}
 	  <span class="image avatar48"><img src="{{ url_for('.static', filename='images/avatar.jpg') }}" alt="" /></span>
 	  <h1 id="title">{{ g.user.name }}</h1>
 	  <p>Hyperspace Engineer <a href="{{ url_for('web.logout')}}"><i class="icon fa-sign-out"></i></a></p>
@@ -32,7 +32,7 @@
 	<nav id="nav">
 	  {% block nav %}{% endblock %}
 	</nav>
-	
+
       </div>
 
       <div class="bottom">
@@ -44,10 +44,20 @@
 	  <li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
 	</ul>
       </div>
-      
+
     </div>
 
     <div id="main">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <ul class=flashes>
+	{% for category, message in messages %}
+	<li class="{{ category }}">{{ message }}</li>
+	{% endfor %}
+      </ul>
+      {% endif %}
+      {% endwith %}
+
       {% block body %}{% endblock %}
     </div>
 

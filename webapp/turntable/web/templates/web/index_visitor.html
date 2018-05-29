@@ -6,14 +6,15 @@
 
     <header>
       <h2 class="alt">
-	<strong>Pivoting</strong> your <a href="#">APIs</a>
+	<strong>Pivoting</strong> your <a href="#">Web Applications</a>
       </h2>
-      <p>Expose your Internals APIs Ligula scelerisque justo sem accumsan diam quis<br />
-	vitae natoque dictum sollicitudin elementum..</p>
+      <p>
+	The <a>APIPivot</a> service allows developers, ISVs and SaaS vendors to easily and securely interconnect their web applications. </p>
     </header>
 
     <footer>
-      <a href="#sign" class="button scrolly">Sign-in for free</a>
+      <a href="{{ url_for('web.login_github') }}" class="button scrolly">Sign up free with GitHub</a><br />
+      No Github? <a href="{{ url_for('web.signup') }}">Sign up free with email</a>
     </footer>
     
   </div>
