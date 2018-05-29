@@ -23,8 +23,8 @@
 	  <h1 id="title"><a href="{{ url_for('web.login') }}">Sign-In <i class="icon fa-sign-in"></i></a></h1>
 	  <p>Intergalactic Traveler</p>
 	  {% else %}
-	  <span class="image avatar48"><img src="{{ url_for('.static', filename='images/avatar.jpg') }}" alt="" /></span>
-	  <h1 id="title">{{ g.user.name }}</h1>
+	  <span class="image avatar48"><img src="{{ g.user.avatar_url(size=48) }}" alt="" /></span>
+	  <h1 id="title">{{ g.user.username }}</h1>
 	  <p>Hyperspace Engineer <a href="{{ url_for('web.logout')}}"><i class="icon fa-sign-out"></i></a></p>
 	  {% endif %}
 	</div>

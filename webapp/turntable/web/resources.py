@@ -47,8 +47,19 @@ def login():
     form = LoginWithEmailForm()
     if form.validate_on_submit():
 
-        flash('Not yet implemented')
-        return redirect(url_for('web.index'))
+        try:
+            user = VisitorBusiness().login_user(
+                email=form.email.data,
+                password=form.password.data)
+
+            session['user_id'] = user.id
+            next_url = request.args.get('next') or url_for('web.index')
+        except Exception as e:
+            print('Error: {}'.format(e))
+            flash('Invalid username or password')
+            next_url = url_for('web.login')
+
+        return redirect(next_url)
     else:
         return render_template('web/login.html', form=form)
 
@@ -268,7 +279,6 @@ def refresh():
     if user is not None:
         # fetch user details
         user_details = github.get('user')
-        print(user_details)
         user.username = user_details.get('login', None)
         user.name = user_details.get('name', None)
         user.email = user_details.get('email', None)

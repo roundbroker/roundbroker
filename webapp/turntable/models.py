@@ -110,6 +110,7 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+
     def avatar_url(self, size):
         """
         The URL of the avatar for the given image size
