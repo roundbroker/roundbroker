@@ -2,7 +2,7 @@
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField, PasswordField
-from wtforms.validators import DataRequired, Email
+from wtforms.validators import DataRequired, Email, Length
 
 class NewPivotForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
@@ -19,9 +19,19 @@ class NewGithubProducerForm(NewGenericProducerForm):
     pass
 
 class SignUpWithEmailForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    username = StringField('Username', validators=[
+        DataRequired(),
+        Length(min=3, max=200)
+    ])
+    email = StringField('Email', validators=[
+        DataRequired(),
+        Email(),
+        Length(min=3, max=1000)
+    ])
+    password = PasswordField('Password', validators=[
+        DataRequired(),
+        Length(min=8, max=1000)
+        ])
     submit = SubmitField('Sign up for APIPivot')
 
 class LoginWithEmailForm(FlaskForm):
