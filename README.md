@@ -5,9 +5,11 @@
 The web application must be hosted such that it is publicly available.
 Developed in Python3, it has few library requirements that must be installed prior to its execution.
 
+    > $ cd webapp
     > $ virtualenv venv
     > $ source venv/bin/activate
     (venv) > $ pip install -r requirements.txt
+    (venv) > $ FLASK_APP=turntable flask db migrate
     (venv) > $ FLASK_APP=turntable FLASK_DEBUG="true" flask run --port 4242
 
 It accepts the following environment variable to ease its configuration:
@@ -37,4 +39,4 @@ A Docker compose stack is available and could be used as follow:
 
 And you could deploy this app in a Docker Swarm stack:
 
-    docker deploy -c docker-compose.yml turntable
+    docker deploy -c docker-compose.yaml turntable
