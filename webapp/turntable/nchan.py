@@ -9,6 +9,11 @@ class NchanChannel(object):
         self.channel_id = channel_id
         self.__stats = None
 
+        self.__stats = {
+            'nb_queued_messages': None,
+            'nb_subscribers': None,
+        }
+
     def create(self):
         print('Create channel {}'.format(self.channel_id))
         nchan_uri = "{}/{}".format(self.nchan_publish_root_url, self.channel_id)
@@ -17,13 +22,13 @@ class NchanChannel(object):
 
     @property
     def nb_queued_messages(self):
-        if self.__stats is None:
+        if self.__stats['nb_queued_messages'] is None:
             self.__refresh_stats(create_channel_if_needed=True)
         return self.__stats['nb_queued_messages']
 
     @property
     def nb_subscribers(self):
-        if self.__stats is None:
+        if self.__stats['nb_subscribers'] is None:
             self.__refresh_stats(create_channel_if_needed=True)
         return self.__stats['nb_subscribers']
 
@@ -34,7 +39,6 @@ class NchanChannel(object):
             if response.status_code == 200:
                 info = response.json()
 
-                self.__stats = dict()
                 if 'messages' in info:
                     self.__stats['nb_queued_messages'] = int(info['messages'])
                 if 'subscribers' in info:
@@ -44,7 +48,5 @@ class NchanChannel(object):
                 self.create()
                 self.__refresh_stats()
 
-        except Exception as e:
-            print(e)
-
-
+        except requests.exceptions.ConnectionError as e:
+            print("Unable to connect to the NChan server: {}".format(e))
