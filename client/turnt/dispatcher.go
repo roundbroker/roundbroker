@@ -10,13 +10,11 @@ func Dispatch(jobs chan Job, workers chan chan Job) {
 		select {
 		case job := <-jobs:
 			logrus.Debug("Received a job to dispatch")
-			go func() {
-				worker := <-workers
-				logrus.Debug("Found an available worker")
-				worker <- job
-				WorkerGauge.Dec()
-				JobGauge.Dec()
-			}()
+			worker := <-workers
+			logrus.Debug("Found an available worker")
+			worker <- job
+			WorkerGauge.Dec()
+			JobGauge.Dec()
 		}
 	}
 }
