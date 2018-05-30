@@ -22,8 +22,8 @@
   <div class="container">
     <header>
       <h2>Producers</h2>
-      <a href="{{ url_for('web.create_producer', pivot_uuid=pivot.uuid) }}"><i class="fa fa-plus">New producer</i></a>      
-    </header>    
+      <a href="{{ url_for('web.create_producer', pivot_uuid=pivot.uuid) }}"><i class="fa fa-plus">New producer</i></a>
+    </header>
     <ul>
       {% for producer in pivot.producers %}
 
@@ -57,7 +57,7 @@
       <h2>Consumers</h2>
       <a href="{{ url_for('web.create_consumer', pivot_uuid=pivot.uuid) }}"><i class="fa fa-plus">New consumer</i></a>
     </header>
-    
+
     {% for consumer in pivot.consumers %}
       <div class="panel panel-primary" style="border:1px solid #000000">
 	<div class="panel-heading">
@@ -76,7 +76,7 @@
 	</div>
       </div>
     {% endfor %}
-    
+
     </div>
 </section>
 
