@@ -35,6 +35,7 @@ func (w Worker) Start(workers chan chan Job) {
 	go func() {
 		for {
 			workers <- workChan
+			WorkerGauge.Inc()
 			select {
 			case job := <-workChan:
 				// declare common fields for logger (error or debug)
@@ -61,12 +62,14 @@ func (w Worker) Start(workers chan chan Job) {
 					}
 				}
 				// send requests
+				reqStart := time.Now()
 				resp, err := http.DefaultClient.Do(req)
 				if err != nil {
 					f["error"] = err
 					logrus.WithFields(f).Errorf("Failed to forward the request to the server")
 					continue
 				}
+				APIRequestDuration.WithLabelValues(job.Request.Method).Observe(time.Since(reqStart).Seconds())
 				rc, err := ioutil.ReadAll(resp.Body)
 				if err != nil {
 					f["error"] = err

@@ -14,6 +14,8 @@ func Dispatch(jobs chan Job, workers chan chan Job) {
 				worker := <-workers
 				logrus.Debug("Found an available worker")
 				worker <- job
+				WorkerGauge.Dec()
+				JobGauge.Dec()
 			}()
 		}
 	}
