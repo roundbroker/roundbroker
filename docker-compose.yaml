@@ -1,11 +1,8 @@
 version: '3.1'
 
 services:
-  web:
+  nchan:
     build: ./nchan
-    ports:
-      - "8080:8080"
-      - "8081:8081"
     depends_on:
       - redis-master
 
@@ -14,7 +11,16 @@ services:
 
   turntable:
     build: ./webapp
-    ports:
-      - "4242:5000"
     depends_on:
-      - web
+      - nchan
+    environment:
+      NCHAN_ROOT_URI: http://nchan
+      FLASK_DEBUG: "true"
+
+  reverse_proxy:
+    build: ./reverse_proxy
+    ports:
+      - 4242:80
+    depends_on:
+      - nchan
+      - turntable
