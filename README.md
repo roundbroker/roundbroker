@@ -6,10 +6,10 @@ The web application must be hosted such that it is publicly available.
 Developed in Python3, it has few library requirements that must be installed prior to its execution.
 
     > $ cd webapp
-    > $ virtualenv venv
+    > $ python3 -m venv venv
     > $ source venv/bin/activate
-    (venv) > $ pip install -r requirements.txt
-    (venv) > $ FLASK_APP=turntable flask db migrate
+    (venv) > $ pip3 install -r requirements.txt
+    (venv) > $ FLASK_APP=turntable flask db upgrade
     (venv) > $ FLASK_APP=turntable FLASK_DEBUG="true" flask run --port 4242
 
 It accepts the following environment variable to ease its configuration:
