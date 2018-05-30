@@ -4,6 +4,7 @@ from turntable.extensions import db
 from turntable.models import Pivot
 from turntable.models import Producer
 
+
 class MemberBusiness(object):
 
     def __init__(self, member):
@@ -76,3 +77,5 @@ class MemberBusiness(object):
             Producer.uuid==producer_uuid,
             Pivot.created_by==self.member.id,
             Pivot.deleted==False).one()
+        
+        
