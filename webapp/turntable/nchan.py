@@ -22,6 +22,18 @@ class NchanChannel(object):
         response = requests.post(self.__build_channel_uri(), data="")
         print(response.status_code)
 
+    def publish(self, data):
+        try:
+            print("Publishing data on <{}>".format(self.channel_id))
+            response = requests.post(self.__build_channel_uri(), headers={"Accept": "text/json"}, data=data)
+
+            print("Response:")
+            print(response.status_code)
+            print(response.json())
+
+        except requests.exceptions.ConnectionError as e:
+            raise NchanException("Unable to connect to the NChan server: {}".format(e))
+
     @property
     def nb_queued_messages(self):
         if self.__stats['nb_queued_messages'] is None:
