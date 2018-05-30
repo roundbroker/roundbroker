@@ -3,6 +3,13 @@
 class BusinessException(Exception):
     pass
 
+
 class DuplicateUserException(BusinessException):
     pass
-    
+
+
+class InvalidProducerException(BusinessException):
+    pass
+
+class NchanCommunicationError(BusinessException):
+    pass

@@ -3,8 +3,11 @@
 from sqlalchemy.exc import IntegrityError
 
 from turntable.extensions import db
-from turntable.models import User
-from turntable import exceptions
+from turntable.models import User, Producer
+from turntable.nchan import NchanChannel, NchanException
+from turntable.exceptions import InvalidProducerException, NchanCommunicationError
+
+from sqlalchemy.orm import exc
 
 class VisitorBusiness(object):
 
@@ -41,3 +44,12 @@ class VisitorBusiness(object):
             raise ValueError('User not found')
 
         return user
+
+    def publish(self, pid, data):
+        try:
+            p = Producer.query.filter(Producer.url_path == pid).one()
+            p.pivot.channel.publish(data)
+        except exc.NoResultFound as e:
+            raise InvalidProducerException("Producer <{}> is not defined in our database".format(pid))
+        except NchanException as e:
+            raise NchanCommunicationError("Unable to communicate with Nchan for producer id=<{}>: {}".format(pid, e))
