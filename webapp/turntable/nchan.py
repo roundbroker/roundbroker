@@ -16,8 +16,8 @@ class NchanChannel(object):
 
     def create(self):
         print('Create channel {}'.format(self.channel_id))
-        nchan_uri = "{}/{}".format(self.nchan_publish_root_url, self.channel_id)
-        response = requests.post(nchan_uri, data="")
+
+        response = requests.post(self.__build_channel_uri(), data="")
         print(response.status_code)
 
     @property
@@ -34,8 +34,7 @@ class NchanChannel(object):
 
     def __refresh_stats(self, create_channel_if_needed=False):
         try:
-            nchan_uri = "{}/{}".format(self.nchan_publish_root_url, self.channel_id)
-            response = requests.get(nchan_uri, headers={"Accept": "text/json"})
+            response = requests.get(self.__build_channel_uri(), headers={"Accept": "text/json"})
             if response.status_code == 200:
                 info = response.json()
 
@@ -50,3 +49,6 @@ class NchanChannel(object):
 
         except requests.exceptions.ConnectionError as e:
             print("Unable to connect to the NChan server: {}".format(e))
+
+    def __build_channel_uri(self):
+        return "{}/{}".format(self.nchan_publish_root_url, self.channel_id)
