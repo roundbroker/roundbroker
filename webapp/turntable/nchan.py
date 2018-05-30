@@ -11,8 +11,6 @@ class NchanChannel(object):
     def __init__(self, nchan_publish_root_url, channel_id):
         self.nchan_publish_root_url = nchan_publish_root_url
         self.channel_id = channel_id
-        self.__stats = None
-
         self.__stats = {
             'nb_queued_messages': None,
             'nb_subscribers': None,
