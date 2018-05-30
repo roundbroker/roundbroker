@@ -4,8 +4,10 @@ import uuid
 from hashlib import md5
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import current_app
 
 from turntable.extensions import db
+from turntable.nchan import NchanChannel
 
 class Pivot(db.Model):
 
@@ -29,6 +31,18 @@ class Pivot(db.Model):
     @property
     def nb_consumers(self):
         return len(list(self.consumers))
+
+    @property
+    def channel_id(self):
+        return uuid.UUID(self.uuid).hex
+
+    @property
+    def channel(self):
+        publish_root_url = current_app.config['NCHAN_PUBLISH_ROOT_URL']
+        return NchanChannel(
+            nchan_publish_root_url=publish_root_url,
+            channel_id=self.channel_id)
+
 
 class Consumer(db.Model):
 

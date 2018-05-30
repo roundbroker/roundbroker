@@ -6,7 +6,7 @@ class Config(object):
     APP_DIR = os.environ.get('APP_DIR', os.getcwd())
 
     # Public Domain
-    PUBLIC_DOMAIN = os.environ.get('PUBLIC_DOMAIN', 'turntable.io')
+    PUBLIC_DOMAIN = os.environ.get('PUBLIC_DOMAIN', '127.0.0.1')
     
     # Public URLs
     HOOK_ROOT_URL = "http://{}/hook".format(PUBLIC_DOMAIN)

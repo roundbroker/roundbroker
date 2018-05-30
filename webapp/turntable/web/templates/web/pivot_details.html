@@ -11,6 +11,10 @@
       <li>Number API Calls: > 10k (todo)</li>
       <li>Description: {{ pivot.description }}</li>
     </ul>
+    <h3>Statistics</h3>
+    <ul>
+      <li>Queued messages: <b>{{ pivot.channel.nb_queued_messages }}</b></li>
+      <li>Active consumers: <b>{{ pivot.channel.nb_subscribers }}</b></li>
   </div>
 </section>
 
