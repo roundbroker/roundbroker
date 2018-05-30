@@ -6,10 +6,10 @@
 
     <header>
       <h2 class="alt">
-	<strong>Pivoting</strong> your <a href="#">APIs</a>
+	<strong>Pivoting</strong> your <a href="#">Web Applications</a>
       </h2>
-      <p>Expose your Internals APIs Ligula scelerisque justo sem accumsan diam quis<br />
-	vitae natoque dictum sollicitudin elementum..</p>
+      <p>
+	The <a>WebPivot</a> service allows developers, ISVs and SaaS vendors to easily and securely interconnect their web applications. </p>
     </header>
 
     <footer>
@@ -38,7 +38,8 @@
 	<article class="item">
 	    (todo) Graphic of the API consomation
 	  <header>
-	    <h3><a href="{{ url_for('web.pivot_details', pivot_uuid=pivot.uuid) }}">{{ pivot.name }}</a></h3>	    
+	    <h3><a href="{{ url_for('web.pivot_details', pivot_uuid=pivot.uuid) }}">{{ pivot.name }}</a></h3>
+	    <strong>{{ pivot.nb_producers }}</strong> producers / <strong>{{ pivot.nb_consumers }}</strong> consumers
 	  </header>
 	</article>
       </div>
@@ -46,8 +47,9 @@
       <div class="4u 12u$(mobile)">
 	<article class="item">
 	    New New New New
-	  <header>
-	    <h3><a href="{{ url_for('web.create_pivot') }}">+ New Pivot</a></h3>	    
+	    <header>
+	      <h3><a href="{{ url_for('web.create_pivot') }}">+ New Pivot</a></h3>
+	      Create a pivot	      
 	  </header>
 	</article>
       </div>

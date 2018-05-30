@@ -3,7 +3,7 @@
 
 <html>
   <head>
-    <title>APIPivot</title>
+    <title>WebPivot</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!--[if lte IE 8]><script src="{{ url_for('.static', filename='assets/js/ie/html5shiv.js') }}"></script><![endif]-->
@@ -14,17 +14,17 @@
 
   <body>
     <div id="header">
-      
+
       <div class="top">
-	
+
 	<div id="logo">
 	  {% if not g.user %}
 	  <span class="image avatar48"><img src="{{ url_for('.static', filename='images/avatar.jpg') }}" alt="" /></span>
-	  <h1 id="title"><a href="{{ url_for('web.login_github') }}">Sign-In <i class="icon fa-github"></i></a></h1>
+	  <h1 id="title"><a href="{{ url_for('web.login') }}">Sign-In <i class="icon fa-sign-in"></i></a></h1>
 	  <p>Intergalactic Traveler</p>
-	  {% else %}	  
-	  <span class="image avatar48"><img src="{{ url_for('.static', filename='images/avatar.jpg') }}" alt="" /></span>
-	  <h1 id="title">{{ g.user.name }}</h1>
+	  {% else %}
+	  <span class="image avatar48"><img src="{{ g.user.avatar_url(size=48) }}" alt="" /></span>
+	  <h1 id="title">{{ g.user.username }}</h1>
 	  <p>Hyperspace Engineer <a href="{{ url_for('web.logout')}}"><i class="icon fa-sign-out"></i></a></p>
 	  {% endif %}
 	</div>
@@ -32,7 +32,7 @@
 	<nav id="nav">
 	  {% block nav %}{% endblock %}
 	</nav>
-	
+
       </div>
 
       <div class="bottom">
@@ -44,10 +44,20 @@
 	  <li><a href="#" class="icon fa-envelope"><span class="label">Email</span></a></li>
 	</ul>
       </div>
-      
+
     </div>
 
     <div id="main">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+	{% for category, message in messages %}
+	<div class="alert alert-{{ category }} alert-dismissible" role="alert">
+	  {{ message }}
+	</div>
+	{% endfor %}
+      {% endif %}
+      {% endwith %}
+
       {% block body %}{% endblock %}
     </div>
 

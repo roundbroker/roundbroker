@@ -1,8 +1,8 @@
 # encoding: utf-8
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField, TextAreaField, PasswordField
+from wtforms.validators import DataRequired, Email, Length
 
 class NewPivotForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
@@ -17,3 +17,24 @@ class NewGenericProducerForm(FlaskForm):
 class NewGithubProducerForm(NewGenericProducerForm):
     # no differences yet with generic producer
     pass
+
+class SignUpWithEmailForm(FlaskForm):
+    username = StringField('Username', validators=[
+        DataRequired(),
+        Length(min=3, max=200)
+    ])
+    email = StringField('Email', validators=[
+        DataRequired(),
+        Email(),
+        Length(min=3, max=1000)
+    ])
+    password = PasswordField('Password', validators=[
+        DataRequired(),
+        Length(min=8, max=1000)
+        ])
+    submit = SubmitField('Sign up for APIPivot')
+
+class LoginWithEmailForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Sign in')

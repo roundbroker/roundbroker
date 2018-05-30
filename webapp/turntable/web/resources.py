@@ -4,14 +4,16 @@ import uuid
 from datetime import datetime
 import requests
 
-from flask import Flask, request, g, session, redirect, url_for, render_template_string, current_app, render_template
+from flask import Flask, request, g, session, redirect, url_for, render_template_string, current_app, render_template, flash
 
 from . import blueprint as web
-from .forms import NewPivotForm, NewGenericProducerForm, NewGithubProducerForm
+from .forms import NewPivotForm, NewGenericProducerForm, NewGithubProducerForm, SignUpWithEmailForm, LoginWithEmailForm
 
 from turntable.extensions import db, github
 from turntable.models import User, Hook, Pivot
 from turntable.member_business import MemberBusiness
+from turntable.visitor_business import VisitorBusiness
+from turntable import exceptions
 
 @web.before_request
 def before_request():
@@ -26,9 +28,47 @@ def index():
     else:
         return render_template('web/index_visitor.html')
 
-@web.route('/login')
+@web.route('/sign-up', methods=['GET', 'POST'])
+def signup():
+    form = SignUpWithEmailForm()
+    if form.validate_on_submit():
+
+        try:
+            user = VisitorBusiness().create_user(
+                username=form.username.data,
+                email=form.email.data,
+                password=form.password.data)
+            flash('Congratulations, you are now a registered user!')
+            next_url = url_for('web.login')
+        except exceptions.DuplicateUserException:
+            flash('User email already reserved!', 'error')
+            next_url = url_for('web.signup')
+
+
+        return redirect(next_url)
+    else:
+        return render_template('web/sign-up.html', form=form)
+
+@web.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('web/login.html')
+    form = LoginWithEmailForm()
+    if form.validate_on_submit():
+
+        try:
+            user = VisitorBusiness().login_user(
+                email=form.email.data,
+                password=form.password.data)
+
+            session['user_id'] = user.id
+            next_url = request.args.get('next') or url_for('web.index')
+        except Exception as e:
+            print('Error: {}'.format(e))
+            flash('Invalid username or password')
+            next_url = url_for('web.login')
+
+        return redirect(next_url)
+    else:
+        return render_template('web/login.html', form=form)
 
 @web.route('/login/github')
 def login_github():
@@ -246,7 +286,6 @@ def refresh():
     if user is not None:
         # fetch user details
         user_details = github.get('user')
-        print(user_details)
         user.username = user_details.get('login', None)
         user.name = user_details.get('name', None)
         user.email = user_details.get('email', None)
