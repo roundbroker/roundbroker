@@ -2,6 +2,10 @@
 
 import requests
 
+class NchanException(Exception):
+    pass
+
+
 class NchanChannel(object):
 
     def __init__(self, nchan_publish_root_url, channel_id):
@@ -48,7 +52,7 @@ class NchanChannel(object):
                 self.__refresh_stats()
 
         except requests.exceptions.ConnectionError as e:
-            print("Unable to connect to the NChan server: {}".format(e))
+            raise NchanException("Unable to connect to the NChan server: {}".format(e))
 
     def __build_channel_uri(self):
         return "{}/{}".format(self.nchan_publish_root_url, self.channel_id)
