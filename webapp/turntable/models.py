@@ -76,7 +76,7 @@ class Producer(db.Model):
 
     @property
     def url(self):
-        return 'apipivots.io/pi/{}'.format(self.url_path)
+        return 'apipivots.io/publish/{}'.format(self.url_path)
 
     @property
     def github_secret(self):
