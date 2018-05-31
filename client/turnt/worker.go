@@ -79,7 +79,7 @@ func (w Worker) Start(workers chan chan Job) {
 				}
 				resp.Body.Close()
 				f["request"] = req
-				f["response"] = rc
+				f["response"] = string(rc)
 				logrus.WithFields(f).Info("Request sent to server")
 
 			}
