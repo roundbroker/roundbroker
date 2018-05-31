@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Sirupsen/logrus"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -64,6 +66,10 @@ func initConfig() {
 	envUsage += "\nConfigurable Environment variables:\n"
 	for k, v := range envDoc {
 		envUsage += fmt.Sprintf("  - %v (default: %q)\n", k, v)
+	}
+
+	if viper.GetBool("verbose") {
+		logrus.SetLevel(logrus.DebugLevel)
 	}
 
 	rootCmd.SetUsageTemplate(rootCmd.UsageTemplate() + envUsage)
