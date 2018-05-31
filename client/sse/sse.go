@@ -101,7 +101,8 @@ func Notify(uri string, evCh chan<- *Event) error {
 		case eName:
 			currEvent.Type = string(bytes.TrimSpace(spl[1]))
 		case dName:
-			currEvent.Data = bytes.NewBuffer(bytes.TrimSpace(spl[1]))
+			data := bytes.TrimPrefix(bs, []byte("data: "))
+			currEvent.Data = bytes.NewBuffer(bytes.TrimSpace(data))
 			evCh <- currEvent
 		}
 		if err == io.EOF {
