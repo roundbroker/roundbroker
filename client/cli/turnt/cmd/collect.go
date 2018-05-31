@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -51,39 +52,45 @@ var collectCmd = &cobra.Command{
 			case content := <-re:
 				// create receiving struct to parse events in response
 				c := struct {
-					Items []struct {
-						ID      string
-						Request struct {
-							URIAppend string
-							Method    string
-							Headers   map[string][]string
-							Body      []byte
-						}
-					}
-					Total int
+					URIAppend string            `json:"uri_append"`
+					Method    string            `json:"method"`
+					Headers   map[string]string `json:"headers"`
+					Body      []byte            `json:"body"`
 				}{}
 
-				err := json.NewDecoder(content.Data).Decode(c)
+				data, err := ioutil.ReadAll(content.Data)
+				if err != nil {
+					log.Errorf("Failed to read data from input message: %v", err)
+					continue
+				}
+				logrus.Debug(string(data))
+
+				err = json.Unmarshal(data, &c)
 				if err != nil {
 					log.Errorf("Failed to decode body content as json response: %v", err)
 					continue
 				}
+				logrus.Debugf("parsed object: %v", c)
 
-				for _, job := range c.Items {
-					jobs <- turnt.Job{
-						ID: uuid.NewV4().String(),
-						Request: turnt.Request{
-							ID:      job.ID,
-							Method:  job.Request.Method,
-							Headers: job.Request.Headers,
-							Body:    job.Request.Body,
-							URI:     viper.GetString("destination.service.url") + job.Request.URIAppend,
-						},
-						StartDate: time.Now(),
-					}
-					turnt.JobGauge.Inc()
-					turnt.RequestCount.Inc()
+				// rebuild headers to the internal format. (in case the future struct from python is valid)
+				headers := make(map[string][]string)
+				for k, v := range c.Headers {
+					headers[k] = []string{v}
 				}
+
+				jobs <- turnt.Job{
+					ID: uuid.NewV4().String(),
+					Request: turnt.Request{
+						ID:      uuid.NewV4().String(),
+						Method:  c.Method,
+						Headers: headers,
+						Body:    c.Body,
+						URI:     viper.GetString("destination.service.url") + c.URIAppend,
+					},
+					StartDate: time.Now(),
+				}
+				turnt.JobGauge.Inc()
+				turnt.RequestCount.Inc()
 			}
 
 			// ---------------------------------------------
