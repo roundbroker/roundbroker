@@ -80,6 +80,7 @@ func (w Worker) Start(workers chan chan Job) {
 				resp.Body.Close()
 				f["request"] = req
 				f["response"] = string(rc)
+				f["responseStatusCode"] = resp.StatusCode
 				logrus.WithFields(f).Info("Request sent to server")
 
 			}
