@@ -7,7 +7,7 @@ from flask import request, g, session, redirect, url_for, current_app
 import json
 
 @blueprint.route('/<string:pid>', methods=['GET', 'POST'])
-@blueprint.route('/<string:pid>/<path:extra_path>', methods=['GET', 'POST'])
+@blueprint.route('/<string:pid>/<path:uri_append>', methods=['GET', 'POST'])
 def push(pid, uri_append=None):
     app = current_app
     flask_error_400 = json.dumps({'success':False}), 400
