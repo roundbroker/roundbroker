@@ -1,13 +1,15 @@
 # encoding: utf-8
 
+import json
+
 from sqlalchemy.exc import IntegrityError
-
-from turntable.extensions import db
-from turntable.models import User, Producer
-from turntable.nchan import NchanChannel, NchanException
-from turntable.exceptions import InvalidProducerException, NchanCommunicationError
-
 from sqlalchemy.orm import exc
+from turntable.exceptions import (InvalidProducerException,
+                                  NchanCommunicationError)
+from turntable.extensions import db
+from turntable.models import Producer, User
+from turntable.nchan import NchanChannel, NchanException
+
 
 class VisitorBusiness(object):
 
@@ -48,7 +50,7 @@ class VisitorBusiness(object):
     def publish(self, pid, data):
         try:
             p = Producer.query.filter(Producer.url_path == pid).one()
-            p.pivot.channel.publish(data)
+            p.pivot.channel.publish(json.dumps(data))
         except exc.NoResultFound as e:
             raise InvalidProducerException("Producer <{}> is not defined in our database".format(pid))
         except NchanException as e:
