@@ -73,6 +73,8 @@
     <script src="{{ url_for('.static', filename='assets/js/util.js') }}"></script>
     <!--[if lte IE 8]><script src="{{ url_for('.static', filename='assets/js/ie/respond.min.js') }}"></script><![endif]-->
     <script src="{{ url_for('.static', filename='assets/js/main.js') }}"></script>
+
+    {% block custom_js%}{% endblock %}
   </body>
 
 </html>

@@ -21,7 +21,7 @@
 <section id="producers_consumers" class="three">
   <div class="container">
     <div class="row">
-      <div class="6u 12u$(mobile)">	
+      <div id="producers" class="6u 12u$(mobile)">	
 	<header>
 	  <h2>Producers <a href="{{ url_for('web.create_producer', pivot_uuid=pivot.uuid) }}"><i class="fa fa-plus"></i></a></h2> 
 	</header>
@@ -50,7 +50,7 @@
 	</ul>
 
       </div>
-      <div class="6u 12u$(mobile)">	
+      <div id="consumers" class="6u 12u$(mobile)">	
 	<header>
 	  <h2>Consumers <a href="{{ url_for('web.create_consumer', pivot_uuid=pivot.uuid) }}"><i class="fa fa-plus"></i></a></h2>
 	</header>
@@ -79,6 +79,42 @@
   
 </section>
 
+<section id="live" class="four">
+  <header>
+    <h2>Live overview</h2>
+    </header>
+    <div class="container">
+
+  <div class="panel panel-primary" style="border:1px solid #000000">
+    <div class="panel-body">
+      <table class="default" id="live-table">
+	<thead>
+	  <tr>
+	    <th>data</th>
+	  </tr>  
+	</thead>
+	<tbody>
+	</tbody>
+      </table>
+</div>
+    </div>
+  </div>
+
+  
+</section>
 
 
+{% endblock %}
+
+{% block custom_js%}
+<script type="text/javascript">
+  function onNewUpdate(message) {
+      document.getElementById('live-table').insertRow(1).insertCell(0).appendChild(
+	  document.createTextNode(message.data)
+      );
+  }
+
+var source = new EventSource('http://127.0.0.1:8081/sub/hello');
+  source.onmessage = onNewUpdate;
+</script>
 {% endblock %}

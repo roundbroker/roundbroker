@@ -1,6 +1,7 @@
 # encoding: utf-8
 
-import json
+from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import exc
@@ -9,6 +10,7 @@ from turntable.exceptions import (InvalidProducerException,
 from turntable.extensions import db
 from turntable.models import Producer, User
 from turntable.nchan import NchanChannel, NchanException
+from turntable.exceptions import InvalidProducerException, NchanCommunicationError, DuplicateUserException
 
 
 class VisitorBusiness(object):
@@ -31,7 +33,7 @@ class VisitorBusiness(object):
         try:
             db.session.commit()
         except IntegrityError:
-            raise exceptions.DuplicateUserException()
+            raise DuplicateUserException()
 
         return user
 
@@ -47,10 +49,13 @@ class VisitorBusiness(object):
 
         return user
 
-    def publish(self, pid, data):
+    def publish(self, pid, web_call):
         try:
             p = Producer.query.filter(Producer.url_path == pid).one()
-            p.pivot.channel.publish(json.dumps(data))
+            web_call.published_on = p.pivot.uuid
+            web_call.published_at = datetime.utcnow()
+
+            p.pivot.channel.publish(web_call.to_dict())
         except exc.NoResultFound as e:
             raise InvalidProducerException("Producer <{}> is not defined in our database".format(pid))
         except NchanException as e:

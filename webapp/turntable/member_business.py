@@ -72,7 +72,6 @@ class MemberBusiness(object):
         Fetches a producer with the specified uuid
         on behalf of the current member.
         """
-
         return Producer.query.join(Pivot).filter(
             Producer.uuid==producer_uuid,
             Pivot.created_by==self.member.id,

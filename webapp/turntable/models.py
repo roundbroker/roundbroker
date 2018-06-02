@@ -3,6 +3,8 @@
 import uuid
 from datetime import datetime
 from hashlib import md5
+import json
+from json import JSONEncoder
 
 from flask import current_app
 from turntable.extensions import db
@@ -146,3 +148,69 @@ class User(db.Model):
 
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return 'https://www.gravatar.com/avatar/{}?d=retro&s={}&r=pg'.format(digest, size)
+
+
+class WebCallRequest(object):
+
+    def __init__(self, protocol):
+        self.protocol = protocol
+
+class WebCallRequestHttp11(WebCallRequest):
+
+    def __init__(self, method, headers, cookies, body, source_ip, source_url):
+        super(WebCallRequestHttp11, self).__init__(protocol='http 1.1')
+
+        self.method = method
+        self.headers = headers
+        self.cookies = cookies
+        self.body = body
+        self.source_ip = source_ip
+        self.source_url = source_url
+
+    def to_dict(self):
+        return {
+            'method': self.method,
+            'headers': self.headers,
+            'cookies': self.cookies,
+            'body': self.body,
+            'source_ip': self.source_ip,
+            'source_url': self.source_url
+        }
+
+    @staticmethod
+    def from_request(self, request):
+        return WebCallRequestHttp11(
+            method=request.method,
+            headers={k: v for k, v in request.headers.items()},
+            bookies=request.cookies,
+            body=request.get_data(as_text=True),
+            source_ip=request.remote_addr,
+            source_url=request.url)
+
+
+class CustomJsonEncoder(JSONEncoder):
+    def default(self, o):
+
+        return str(o)
+
+class WebCall(object):
+
+    def __init__(self, webcall_request):
+        self.received_at = datetime.utcnow()
+        self.request = webcall_request
+        self.published_on = None
+        self.published_at = None
+
+    def to_dict(self):
+        return {
+            'received_at': self.received_at,
+            'published_on': self.published_on,
+            'published_at': self.published_at,
+            'request': self.request.to_dict()
+        }
+
+    def to_json(self):
+        return json.dumps(
+            self.to_dict(),
+            cls=CustomJsonEncoder, sort_keys=True)
+
