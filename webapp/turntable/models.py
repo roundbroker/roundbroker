@@ -18,7 +18,7 @@ class Pivot(db.Model):
     __tablename__ = 'pivot'
 
     id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String(32), nullable=False, default=str(uuid.uuid4()))
+    uuid = db.Column(db.String(32), nullable=False)
     name = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
     deleted = db.Column(db.Boolean(), default=False, nullable=False)
@@ -27,6 +27,9 @@ class Pivot(db.Model):
     deleted_at = db.Column(db.DateTime(), nullable=True)
     producers = db.relationship('Producer', lazy='dynamic', backref='pivot')
     consumers = db.relationship('Consumer', lazy='dynamic', backref='pivot')
+
+    def __init__(self):
+        self.uuid = str(uuid.uuid4())
 
     @property
     def nb_producers(self):
@@ -54,10 +57,13 @@ class Consumer(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     pivot_id = db.Column(db.Integer(), db.ForeignKey('pivot.id'))
-    uuid = db.Column(db.String(32), nullable=False, default=str(uuid.uuid4()))
+    uuid = db.Column(db.String(32), nullable=False)
     url_path = db.Column(db.String(), nullable=False)
     name = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
+
+    def __init__(self):
+        self.uuid = str(uuid.uuid4())
 
     @property
     def url(self):
@@ -69,11 +75,14 @@ class Producer(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     pivot_id = db.Column(db.Integer(), db.ForeignKey('pivot.id'))
-    uuid = db.Column(db.String(32), nullable=False, default=str(uuid.uuid4()))
+    uuid = db.Column(db.String(32), nullable=False)
     url_path = db.Column(db.String(), nullable=False)
     name = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
     ptype = db.Column(db.String(), nullable=False)
+
+    def __init__(self):
+        self.uuid = str(uuid.uuid4())
 
     def is_github(self):
         return self.ptype == 'github'
