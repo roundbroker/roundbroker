@@ -4,7 +4,7 @@ from turntable.extensions import db
 from turntable.models import Pivot
 from turntable.models import Producer
 from turntable.exceptions import MaxNumberOfPivotReachedException
-
+from turntable.exceptions import MaxNumberOfProducerReachedException
 
 class MemberBusiness(object):
 
@@ -54,9 +54,16 @@ class MemberBusiness(object):
         producer.url_path = name
         producer.ptype = ptype
 
+        # enforce the max number of producer per pivot
+        if pivot.can_have_more_producer():
+            db.session.add(pivot)
+            db.session.commit()
+        else:
+            raise MaxNumberOfProducerReachedException()
+
         db.session.add(producer)
         db.session.commit()
-        
+
         return producer
 
     def create_github_producer(self, pivot_uuid, name, description):

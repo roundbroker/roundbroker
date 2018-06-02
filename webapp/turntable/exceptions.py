@@ -15,3 +15,9 @@ class NchanCommunicationError(BusinessException):
 
 class MaxNumberOfPivotReachedException(BusinessException):
     pass
+
+class MaxNumberOfProducerReachedException(BusinessException):
+    pass
+
+class MaxNumberOfConsumerReachedException(BusinessException):
+    pass

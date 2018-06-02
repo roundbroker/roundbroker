@@ -31,13 +31,22 @@ class Pivot(db.Model):
     def __init__(self):
         self.uuid = str(uuid.uuid4())
 
+
+    def can_have_more_producer(self):
+        """
+        This method returns False if the pivot has reached
+        the maximum number of producer it is allowed to
+        """
+
+        return self.nb_producers < 5
+
     @property
     def nb_producers(self):
-        return len(list(self.producers))
+        return db.session.query(Producer).filter_by(pivot_id=self.id).count()
 
     @property
     def nb_consumers(self):
-        return len(list(self.consumers))
+        return db.session.query(Consumer).filter_by(pivot_id=self.id).count()
 
     @property
     def channel_id(self):
@@ -145,6 +154,7 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    @property
     def nb_pivots(self):
         """
         Returns the number of pivot the user manages
@@ -158,7 +168,7 @@ class User(db.Model):
         the maximum number of pivot he is allowed to
         """
 
-        return self.nb_pivots() < 5
+        return self.nb_pivots < 5
 
     def avatar_url(self, size):
         """
