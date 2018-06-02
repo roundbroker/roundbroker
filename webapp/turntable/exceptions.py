@@ -7,9 +7,11 @@ class BusinessException(Exception):
 class DuplicateUserException(BusinessException):
     pass
 
-
 class InvalidProducerException(BusinessException):
     pass
 
 class NchanCommunicationError(BusinessException):
+    pass
+
+class MaxNumberOfPivotReachedException(BusinessException):
     pass

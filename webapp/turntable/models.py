@@ -136,6 +136,20 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def nb_pivots(self):
+        """
+        Returns the number of pivot the user manages
+        """
+
+        return db.session.query(Pivot).filter_by(created_by=self.id, deleted=False).count()
+
+    def can_create_more_pivot(self):
+        """
+        This method returns False if the user has reached
+        the maximum number of pivot he is allowed to
+        """
+
+        return self.nb_pivots() < 5
 
     def avatar_url(self, size):
         """

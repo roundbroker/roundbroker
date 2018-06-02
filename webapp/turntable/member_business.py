@@ -3,6 +3,7 @@
 from turntable.extensions import db
 from turntable.models import Pivot
 from turntable.models import Producer
+from turntable.exceptions import MaxNumberOfPivotReachedException
 
 
 class MemberBusiness(object):
@@ -20,8 +21,12 @@ class MemberBusiness(object):
         pivot.description = description
         pivot.created_by = self.member.id
         
-        db.session.add(pivot)
-        db.session.commit()
+        # enforce the max number of pivot per member
+        if self.member.can_create_more_pivot():
+            db.session.add(pivot)
+            db.session.commit()
+        else:
+            raise MaxNumberOfPivotReachedException()
 
         return pivot
 
