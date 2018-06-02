@@ -21,3 +21,6 @@ class MaxNumberOfProducerReachedException(BusinessException):
 
 class MaxNumberOfConsumerReachedException(BusinessException):
     pass
+
+class UnauthorizedException(BusinessException):
+    pass

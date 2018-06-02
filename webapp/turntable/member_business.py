@@ -3,13 +3,19 @@
 from turntable.extensions import db
 from turntable.models import Pivot
 from turntable.models import Producer
+from turntable.models import Consumer
 from turntable.exceptions import MaxNumberOfPivotReachedException
 from turntable.exceptions import MaxNumberOfProducerReachedException
+from turntable.exceptions import MaxNumberOfConsumerReachedException
+from turntable.exceptions import UnauthorizedException
+
 
 class MemberBusiness(object):
 
     def __init__(self, member):
         self.member = member
+        if self.member is None:
+            raise UnauthorizedException()
 
     def create_pivot(self, name, description):
         """
