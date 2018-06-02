@@ -1,7 +1,7 @@
 """empty message
 
 Revision ID: 69234aa61a1f
-Revises: 
+Revises:
 Create Date: 2018-05-29 09:38:14.140640
 
 """
@@ -61,6 +61,7 @@ def upgrade():
     sa.Column('url_path', sa.String(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
+    sa.Column('ctype', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['pivot_id'], ['pivot.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

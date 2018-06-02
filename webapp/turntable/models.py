@@ -40,6 +40,14 @@ class Pivot(db.Model):
 
         return self.nb_producers < 5
 
+    def can_have_more_consumer(self):
+        """
+        This method returns False if the pivot has reached
+        the maximum number of consumer it is allowed to
+        """
+
+        return self.nb_consumers < 5
+
     @property
     def nb_producers(self):
         return db.session.query(Producer).filter_by(pivot_id=self.id).count()
@@ -70,6 +78,7 @@ class Consumer(db.Model):
     url_path = db.Column(db.String(), nullable=False)
     name = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
+    ctype = db.Column(db.String(), nullable=False)
 
     def __init__(self):
         self.uuid = str(uuid.uuid4())

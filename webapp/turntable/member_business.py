@@ -88,5 +88,42 @@ class MemberBusiness(object):
             Producer.uuid==producer_uuid,
             Pivot.created_by==self.member.id,
             Pivot.deleted==False).one()
-        
-        
+
+    def get_consumer(self, consumer_uuid):
+        """
+        Fetches a consumer with the specified uuid
+        on behalf of the current member.
+        """
+        return Consumer.query.join(Pivot).filter(
+            Consumer.uuid==consumer_uuid,
+            Pivot.created_by==self.member.id,
+            Pivot.deleted==False).one()
+
+
+    def create_generic_consumer(self, pivot_uuid, name, description, ctype='generic'):
+        """
+        Creates a generic consumer on behalf
+        of the current member.
+        """
+
+        pivot = self.get_pivot(uuid=pivot_uuid)
+
+        consumer = Consumer()
+        consumer.pivot_id = pivot.id
+        consumer.name = name
+        consumer.description = description
+        consumer.url_path = name
+        consumer.ctype = ctype
+
+        # enforce the max number of consumer per pivot
+        if pivot.can_have_more_consumer():
+            db.session.add(pivot)
+            db.session.commit()
+        else:
+            raise MaxNumberOfConsumerReachedException()
+
+        db.session.add(consumer)
+        db.session.commit()
+
+        return consumer
+
