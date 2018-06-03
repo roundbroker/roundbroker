@@ -5,6 +5,7 @@ from datetime import datetime
 from hashlib import md5
 import json
 from json import JSONEncoder
+from sqlalchemy.ext.declarative import declared_attr
 
 from flask import current_app
 from turntable.extensions import db
@@ -13,24 +14,42 @@ from turntable.settings import Config
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
-class Pivot(db.Model):
-
-    __tablename__ = 'pivot'
-
+class BaseModelMixin(object):
     id = db.Column(db.Integer, primary_key=True)
+
+    created_at = db.Column(db.DateTime(), default=db.func.now(), nullable=False)
+    updated_at = db.Column(db.DateTime(), default=db.func.now(), onupdate=db.func.now())
+
+class NchanChannelModelMixin(object):
     uuid = db.Column(db.String(32), nullable=False)
+
     name = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
     deleted = db.Column(db.Boolean(), default=False, nullable=False)
-    created_by = db.Column(db.Integer(), db.ForeignKey('user.id'))
-    created_at = db.Column(db.DateTime(), default=datetime.utcnow(), nullable=False)
     deleted_at = db.Column(db.DateTime(), nullable=True)
+
+    @property
+    def channel_id(self):
+        return uuid.UUID(self.uuid).hex
+
+    @property
+    def channel(self):
+        publish_root_url = current_app.config['NCHAN_PUBLISH_ROOT_URL']
+        return NchanChannel(
+            nchan_publish_root_url=publish_root_url,
+            channel_id=self.channel_id)
+
+
+class Pivot(db.Model, BaseModelMixin, NchanChannelModelMixin):
+
+    __tablename__ = 'pivot'
+
     producers = db.relationship('Producer', lazy='dynamic', backref='pivot')
     consumers = db.relationship('Consumer', lazy='dynamic', backref='pivot')
+    created_by = db.Column(db.Integer(), db.ForeignKey('user.id'))
 
     def __init__(self):
         self.uuid = str(uuid.uuid4())
-
 
     def can_have_more_producer(self):
         """
@@ -56,28 +75,13 @@ class Pivot(db.Model):
     def nb_consumers(self):
         return db.session.query(Consumer).filter_by(pivot_id=self.id).count()
 
-    @property
-    def channel_id(self):
-        return uuid.UUID(self.uuid).hex
 
-    @property
-    def channel(self):
-        publish_root_url = current_app.config['NCHAN_PUBLISH_ROOT_URL']
-        return NchanChannel(
-            nchan_publish_root_url=publish_root_url,
-            channel_id=self.channel_id)
-
-
-class Consumer(db.Model):
+class Consumer(db.Model, BaseModelMixin, NchanChannelModelMixin):
 
     __tablename__ = 'consumer'
 
-    id = db.Column(db.Integer, primary_key=True)
     pivot_id = db.Column(db.Integer(), db.ForeignKey('pivot.id'))
-    uuid = db.Column(db.String(32), nullable=False)
     url_path = db.Column(db.String(), nullable=False)
-    name = db.Column(db.String(), nullable=False)
-    description = db.Column(db.String(), nullable=True)
     ctype = db.Column(db.String(), nullable=False)
 
     def __init__(self):
@@ -87,16 +91,13 @@ class Consumer(db.Model):
     def url(self):
         return '{}/ci/{}'.format(Config.PUBLIC_DOMAIN, self.url_path)
 
-class Producer(db.Model):
+
+class Producer(db.Model, BaseModelMixin, NchanChannelModelMixin):
 
     __tablename__ = 'producer'
 
-    id = db.Column(db.Integer, primary_key=True)
     pivot_id = db.Column(db.Integer(), db.ForeignKey('pivot.id'))
-    uuid = db.Column(db.String(32), nullable=False)
     url_path = db.Column(db.String(), nullable=False)
-    name = db.Column(db.String(), nullable=False)
-    description = db.Column(db.String(), nullable=True)
     ptype = db.Column(db.String(), nullable=False)
 
     def __init__(self):
@@ -136,11 +137,10 @@ class Hook(db.Model):
         self.github_hook_id = github_hook_id
 
 
-class User(db.Model):
+class User(db.Model, BaseModelMixin):
 
     __tablename__ = 'user'
 
-    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(200), unique=True, index=True)
     name = db.Column(db.String())
     email = db.Column(db.String(), unique=True, index=True)
@@ -255,4 +255,3 @@ class WebCall(object):
         return json.dumps(
             self.to_dict(),
             cls=CustomJsonEncoder, sort_keys=True)
-
