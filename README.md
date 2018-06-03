@@ -45,6 +45,6 @@ And you could deploy this app in a Docker Swarm stack:
 
 ## URLs
 
-  - Web UI : http://localhost:4242/ui
-  - Push base URL : http://localhost:4242/pivot/
-  - Consumer base URL : http://localhost:4242/sub/
+  - Web UI : http://localhost/ui
+  - Push base URL : http://localhost/pivot/
+  - Consumer base URL : http://localhost/sub/
