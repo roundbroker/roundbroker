@@ -220,11 +220,11 @@ class WebCallRequestHttp11(WebCallRequest):
         }
 
     @staticmethod
-    def from_request(self, request):
+    def from_request(request):
         return WebCallRequestHttp11(
             method=request.method,
             headers={k: v for k, v in request.headers.items()},
-            bookies=request.cookies,
+            cookies=request.cookies,
             body=request.get_data(as_text=True),
             source_ip=request.remote_addr,
             source_url=request.url)
