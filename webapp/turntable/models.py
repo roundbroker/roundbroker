@@ -21,8 +21,7 @@ class BaseModelMixin(object):
     updated_at = db.Column(db.DateTime(), default=db.func.now(), onupdate=db.func.now())
 
 class NchanChannelModelMixin(object):
-    uuid = db.Column(db.String(32), nullable=False)
-
+    uuid = db.Column(db.String(36), nullable=False)
     name = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
     deleted = db.Column(db.Boolean(), default=False, nullable=False)
