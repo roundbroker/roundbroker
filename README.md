@@ -35,6 +35,7 @@ Once declared on Github, both the obtained `client id` and `client secret` provi
 A Docker compose stack is available and could be used as follow:
 
     docker-compose build
+    docker-compose run turntable /usr/local/bin/flask db upgrade
     docker-compose up
 
 And you could deploy this app in a Docker Swarm stack:
