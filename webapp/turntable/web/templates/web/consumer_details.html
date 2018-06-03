@@ -1,0 +1,19 @@
+{% extends 'web/struct/layout_pivot.html' %}
+{% block body %}
+
+<section id="summary" class="two">
+  <div class="container">
+    <header>
+      <h2>Generic Consumer Summary</h2>
+    </header>
+    <ul>
+      <li>Name: {{ consumer.name }}</li>
+      <li>Type: {{ consumer.ctype }}</li>      
+      <li>Description: {{ consumer.description }}</li>
+      <li>URL: {{ consumer.url }}</li>
+    </ul>
+  </div>
+</section>
+
+
+{% endblock %}

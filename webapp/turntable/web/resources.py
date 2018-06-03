@@ -7,7 +7,12 @@ import requests
 from flask import Flask, request, g, session, redirect, url_for, render_template_string, current_app, render_template, flash
 
 from . import blueprint as web
-from .forms import NewPivotForm, NewGenericProducerForm, NewGithubProducerForm, SignUpWithEmailForm, LoginWithEmailForm
+from .forms import NewPivotForm
+from .forms import NewGenericProducerForm
+from .forms import NewGithubProducerForm
+from .forms import SignUpWithEmailForm
+from .forms import LoginWithEmailForm
+from .forms import NewGenericConsumerForm
 
 from turntable.extensions import db, github
 from turntable.models import User, Hook, Pivot
@@ -105,6 +110,32 @@ def create_consumer(pivot_uuid):
     return render_template(
         'web/new_consumer.html',
         pivot=MemberBusiness(g.user).get_pivot(pivot_uuid))
+
+@web.route('/pivots/<pivot_uuid>/consumers/new/generic', methods=['GET', 'POST'])
+def create_generic_consumer(pivot_uuid):
+    form = NewGenericConsumerForm()
+    if form.validate_on_submit():
+        consumer = MemberBusiness(g.user).create_generic_consumer(
+            pivot_uuid=pivot_uuid,
+            name=form.name.data,
+            description=form.description.data)
+
+        return redirect(url_for(
+            'web.consumer_details', pivot_uuid=pivot_uuid, consumer_uuid=consumer.uuid))
+
+    return render_template(
+        'web/new_generic_consumer.html',
+        pivot=MemberBusiness(g.user).get_pivot(pivot_uuid),
+        form=form)
+
+@web.route('/pivots/<pivot_uuid>/consumers/<consumer_uuid>')
+def consumer_details(pivot_uuid, consumer_uuid):
+
+    consumer = MemberBusiness(g.user).get_consumer(consumer_uuid=consumer_uuid)
+
+    return render_template(
+        'web/consumer_details.html',
+        consumer=consumer)
 
 @web.route('/pivots/<pivot_uuid>/producers/new')
 def create_producer(pivot_uuid):

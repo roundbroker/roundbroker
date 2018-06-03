@@ -2,7 +2,7 @@ from . import blueprint
 
 from turntable.visitor_business import VisitorBusiness
 from turntable.exceptions import BusinessException
-
+from turntable.models import WebCall
 from flask import request, g, session, redirect, url_for, current_app
 import json
 
@@ -15,18 +15,7 @@ def push(pid, uri_append=None):
     app.logger.info("Handling new request for pivot=<{}>".format(pid))
 
     try:
-        posted_data = {
-            'method': request.method,
-            'uri_append': uri_append,
-            'headers': { k: v for k, v in request.headers.items() },
-            'body': request.get_data(as_text=True),
-            'cookies': request.cookies,
-            'source_ip': request.remote_addr,
-            'source_url': request.url,
-        }
-
-        VisitorBusiness().publish(pid, posted_data)
-
+        VisitorBusiness().publish(pid, WebCall.from_request(request))
         return json.dumps({'success':True}), 200, {'ContentType':'application/json'}
 
     except BusinessException as e:

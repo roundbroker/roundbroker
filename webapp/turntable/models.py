@@ -3,6 +3,8 @@
 import uuid
 from datetime import datetime
 from hashlib import md5
+import json
+from json import JSONEncoder
 
 from flask import current_app
 from turntable.extensions import db
@@ -16,7 +18,7 @@ class Pivot(db.Model):
     __tablename__ = 'pivot'
 
     id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.String(32), nullable=False, default=str(uuid.uuid4()))
+    uuid = db.Column(db.String(32), nullable=False)
     name = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
     deleted = db.Column(db.Boolean(), default=False, nullable=False)
@@ -26,13 +28,33 @@ class Pivot(db.Model):
     producers = db.relationship('Producer', lazy='dynamic', backref='pivot')
     consumers = db.relationship('Consumer', lazy='dynamic', backref='pivot')
 
+    def __init__(self):
+        self.uuid = str(uuid.uuid4())
+
+
+    def can_have_more_producer(self):
+        """
+        This method returns False if the pivot has reached
+        the maximum number of producer it is allowed to
+        """
+
+        return self.nb_producers < 5
+
+    def can_have_more_consumer(self):
+        """
+        This method returns False if the pivot has reached
+        the maximum number of consumer it is allowed to
+        """
+
+        return self.nb_consumers < 5
+
     @property
     def nb_producers(self):
-        return len(list(self.producers))
+        return db.session.query(Producer).filter_by(pivot_id=self.id).count()
 
     @property
     def nb_consumers(self):
-        return len(list(self.consumers))
+        return db.session.query(Consumer).filter_by(pivot_id=self.id).count()
 
     @property
     def channel_id(self):
@@ -52,10 +74,14 @@ class Consumer(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     pivot_id = db.Column(db.Integer(), db.ForeignKey('pivot.id'))
-    uuid = db.Column(db.String(32), nullable=False, default=str(uuid.uuid4()))
+    uuid = db.Column(db.String(32), nullable=False)
     url_path = db.Column(db.String(), nullable=False)
     name = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
+    ctype = db.Column(db.String(), nullable=False)
+
+    def __init__(self):
+        self.uuid = str(uuid.uuid4())
 
     @property
     def url(self):
@@ -67,11 +93,14 @@ class Producer(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     pivot_id = db.Column(db.Integer(), db.ForeignKey('pivot.id'))
-    uuid = db.Column(db.String(32), nullable=False, default=str(uuid.uuid4()))
+    uuid = db.Column(db.String(32), nullable=False)
     url_path = db.Column(db.String(), nullable=False)
     name = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=True)
     ptype = db.Column(db.String(), nullable=False)
+
+    def __init__(self):
+        self.uuid = str(uuid.uuid4())
 
     def is_github(self):
         return self.ptype == 'github'
@@ -134,6 +163,21 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    @property
+    def nb_pivots(self):
+        """
+        Returns the number of pivot the user manages
+        """
+
+        return db.session.query(Pivot).filter_by(created_by=self.id, deleted=False).count()
+
+    def can_create_more_pivot(self):
+        """
+        This method returns False if the user has reached
+        the maximum number of pivot he is allowed to
+        """
+
+        return self.nb_pivots < 5
 
     def avatar_url(self, size):
         """
@@ -146,3 +190,69 @@ class User(db.Model):
 
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return 'https://www.gravatar.com/avatar/{}?d=retro&s={}&r=pg'.format(digest, size)
+
+
+class WebCallRequest(object):
+
+    def __init__(self, protocol):
+        self.protocol = protocol
+
+class WebCallRequestHttp11(WebCallRequest):
+
+    def __init__(self, method, headers, cookies, body, source_ip, source_url):
+        super(WebCallRequestHttp11, self).__init__(protocol='http 1.1')
+
+        self.method = method
+        self.headers = headers
+        self.cookies = cookies
+        self.body = body
+        self.source_ip = source_ip
+        self.source_url = source_url
+
+    def to_dict(self):
+        return {
+            'method': self.method,
+            'headers': self.headers,
+            'cookies': self.cookies,
+            'body': self.body,
+            'source_ip': self.source_ip,
+            'source_url': self.source_url
+        }
+
+    @staticmethod
+    def from_request(self, request):
+        return WebCallRequestHttp11(
+            method=request.method,
+            headers={k: v for k, v in request.headers.items()},
+            bookies=request.cookies,
+            body=request.get_data(as_text=True),
+            source_ip=request.remote_addr,
+            source_url=request.url)
+
+
+class CustomJsonEncoder(JSONEncoder):
+    def default(self, o):
+
+        return str(o)
+
+class WebCall(object):
+
+    def __init__(self, webcall_request):
+        self.received_at = datetime.utcnow()
+        self.request = webcall_request
+        self.published_on = None
+        self.published_at = None
+
+    def to_dict(self):
+        return {
+            'received_at': self.received_at,
+            'published_on': self.published_on,
+            'published_at': self.published_at,
+            'request': self.request.to_dict()
+        }
+
+    def to_json(self):
+        return json.dumps(
+            self.to_dict(),
+            cls=CustomJsonEncoder, sort_keys=True)
+
