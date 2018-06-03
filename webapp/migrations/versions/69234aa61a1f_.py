@@ -38,6 +38,8 @@ def upgrade():
     sa.Column('github_nb_followers', sa.Integer(), nullable=True),
     sa.Column('github_nb_following', sa.Integer(), nullable=True),
     sa.Column('github_access_token', sa.String(length=200), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
@@ -51,6 +53,7 @@ def upgrade():
     sa.Column('created_by', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=False),
     sa.Column('deleted_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['created_by'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -61,6 +64,10 @@ def upgrade():
     sa.Column('url_path', sa.String(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('deleted', sa.Boolean(), nullable=False),
+    sa.Column('deleted_at', sa.DateTime(), nullable=True),
     sa.Column('ctype', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['pivot_id'], ['pivot.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -72,6 +79,10 @@ def upgrade():
     sa.Column('url_path', sa.String(), nullable=False),
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('deleted', sa.Boolean(), nullable=False),
+    sa.Column('deleted_at', sa.DateTime(), nullable=True),
     sa.Column('ptype', sa.String(), nullable=False),
     sa.ForeignKeyConstraint(['pivot_id'], ['pivot.id'], ),
     sa.PrimaryKeyConstraint('id')
