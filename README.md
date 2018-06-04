@@ -30,13 +30,36 @@ The application leverages Github OAuth for user authentication. It requires a `G
 Once declared on Github, both the obtained `client id` and `client secret` provided by github must be injected in your instance configuration.
 
 
-## Docker compose stack
+## Start the server stack
 
-A Docker compose stack is available and could be used as follow:
+A Docker compose stack is available and allows to quickly start all the required services (database, nchan, webapp, etc.).
+
+You could start the stack by executing the following commands.
 
     docker-compose build
+    docker-compose run turntable /usr/local/bin/flask db upgrade
     docker-compose up
 
-And you could deploy this app in a Docker Swarm stack:
+The `docker-compose.yaml` file could also be used to deploy the server side in Docker Swarm stack:
 
     docker deploy -c docker-compose.yaml turntable
+
+
+## Start the official client
+
+This Git repository contains a client, written in Go. This client is designed to read one (and only one) consumer queue, hence you need to run as many clients as you have pivot URLs.
+
+To start the client on the `48a6a147c5474f7e89229072eb02473c` queue, you can execute the following commands:
+
+    docker build -t turnt -f client/Dockerfile client
+    export PIVOT_URL=http://localhost/sub/48a6a147c5474f7e89229072eb02473c
+    docker run --rm -it --net="host" -e SERVER_ADDRESS=$PIVOT_URL turnt
+
+One could easily develop its own client to retrieve data from the APITurntable servers.
+
+
+## URLs
+
+  - Web UI : http://localhost/ui
+  - Push base URL : http://localhost/pivot/
+  - Consumer base URL : http://localhost/sub/

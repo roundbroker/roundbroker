@@ -13,14 +13,24 @@ services:
     build: ./webapp
     depends_on:
       - nchan
+      - database
     environment:
       NCHAN_ROOT_URI: http://nchan
       FLASK_DEBUG: "true"
+      DATABASE_URI: postgresql://turntable:PleaseChangeMe!@database/turntable
+
+  database:
+    image: postgres:10
+    restart: always
+    environment:
+      POSTGRES_USER: turntable
+      POSTGRES_PASSWORD: PleaseChangeMe!
+      POSTGRES_DB: turntable
 
   reverse_proxy:
     build: ./reverse_proxy
     ports:
-      - 4242:80
+      - 80:80
     depends_on:
       - nchan
       - turntable
