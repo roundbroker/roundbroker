@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -43,6 +44,7 @@ var collectCmd = &cobra.Command{
 
 		// create events channel (sse client)
 		re := make(chan *sse.Event, 1000)
+		createSSERequest()
 		go sse.Notify(viper.GetString("server.address"), re)
 
 		// main loop. This loop retrieve requests from sse server and pass them to the
@@ -129,6 +131,21 @@ func init() {
 		turnt.JobGauge,
 		turnt.APIRequestDuration,
 	)
+}
+
+func createSSERequest() {
+	// lastReqID := l.Load()
+	lastReqID := ""
+	sse.GetReq = func(verb, uri string, body io.Reader) (*http.Request, error) {
+		req, err := http.NewRequest(verb, uri, body)
+		if err != nil {
+			return nil, err
+		}
+		if lastReqID != "" {
+			req.Header.Add("Last-Event-Id", lastReqID)
+		}
+		return req, nil
+	}
 }
 
 func exposeMetrics(addr string, path string) {
