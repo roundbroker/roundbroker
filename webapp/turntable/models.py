@@ -198,7 +198,7 @@ class WebCallRequest(object):
 
 class WebCallRequestHttp11(WebCallRequest):
 
-    def __init__(self, method, headers, cookies, body, source_ip, source_url):
+    def __init__(self, method, headers, cookies, body, source_ip, source_url, extra_path=None, args=None):
         super(WebCallRequestHttp11, self).__init__(protocol='http 1.1')
 
         self.method = method
@@ -207,6 +207,8 @@ class WebCallRequestHttp11(WebCallRequest):
         self.body = body
         self.source_ip = source_ip
         self.source_url = source_url
+        self.extra_path = extra_path
+        self.args = args
 
     def to_dict(self):
         return {
@@ -215,24 +217,16 @@ class WebCallRequestHttp11(WebCallRequest):
             'cookies': self.cookies,
             'body': self.body,
             'source_ip': self.source_ip,
-            'source_url': self.source_url
+            'source_url': self.source_url,
+            'extra_path': self.extra_path,
+            'args': self.args,
         }
-
-    @staticmethod
-    def from_request(request):
-        return WebCallRequestHttp11(
-            method=request.method,
-            headers={k: v for k, v in request.headers.items()},
-            cookies=request.cookies,
-            body=request.get_data(as_text=True),
-            source_ip=request.remote_addr,
-            source_url=request.url)
 
 
 class CustomJsonEncoder(JSONEncoder):
     def default(self, o):
-
         return str(o)
+
 
 class WebCall(object):
 
