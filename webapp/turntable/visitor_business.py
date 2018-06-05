@@ -55,7 +55,7 @@ class VisitorBusiness(object):
             web_call.published_on = p.pivot.uuid
             web_call.published_at = datetime.utcnow()
 
-            p.pivot.channel.publish(web_call.to_dict())
+            p.pivot.channel.publish(web_call.to_json())
         except exc.NoResultFound as e:
             raise InvalidProducerException("Producer <{}> is not defined in our database".format(pid))
         except NchanException as e:
