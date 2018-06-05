@@ -12,8 +12,9 @@ import (
 
 //SSE name constants
 const (
-	eName = "event"
-	dName = "data"
+	eName  = "event"
+	dName  = "data"
+	idName = "id"
 )
 
 var (
@@ -40,6 +41,7 @@ type Event struct {
 	URI  string
 	Type string
 	Data io.Reader
+	ID   string
 }
 
 //GetReq is a function to return a single request. It will be used by notify to
@@ -77,6 +79,7 @@ func Notify(uri string, evCh chan<- *Event) error {
 	delim := []byte{':', ' '}
 
 	var currEvent *Event
+	currEvent = &Event{URI: uri}
 
 	for {
 		bs, err := br.ReadBytes('\n')
@@ -87,23 +90,28 @@ func Notify(uri string, evCh chan<- *Event) error {
 		}
 
 		if len(bs) < 2 {
+			if currEvent.ID != "" && currEvent.Data != nil {
+				evCh <- currEvent
+				currEvent = &Event{URI: uri}
+			}
 			continue
 		}
 
 		spl := bytes.Split(bs, delim)
 
 		if len(spl) < 2 {
+			currEvent = &Event{URI: uri}
 			continue
 		}
 
-		currEvent = &Event{URI: uri}
 		switch string(spl[0]) {
 		case eName:
 			currEvent.Type = string(bytes.TrimSpace(spl[1]))
 		case dName:
 			data := bytes.TrimPrefix(bs, []byte("data: "))
 			currEvent.Data = bytes.NewBuffer(bytes.TrimSpace(data))
-			evCh <- currEvent
+		case idName:
+			currEvent.ID = string(bytes.TrimSpace(spl[1]))
 		}
 		if err == io.EOF {
 			break
