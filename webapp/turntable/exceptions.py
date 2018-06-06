@@ -10,6 +10,9 @@ class DuplicateUserException(BusinessException):
 class InvalidProducerException(BusinessException):
     pass
 
+class InvalidConsumerException(BusinessException):
+    pass
+
 class NchanCommunicationError(BusinessException):
     pass
 

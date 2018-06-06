@@ -19,11 +19,18 @@ def create_app():
     github.init_app(app)
 
     # Initialize blueprints
-    from turntable.web import blueprint
-    app.register_blueprint(blueprint)
 
-    from turntable.pivot import blueprint
-    app.register_blueprint(blueprint)
+    # UI
+    from turntable.web import blueprint as blueprint_ui
+    app.register_blueprint(blueprint_ui)
+
+    # Produce
+    from turntable.produce import blueprint as blueprint_produce
+    app.register_blueprint(blueprint_produce)
+
+    # Nchan-cb
+    from turntable.nchancb import blueprint as blueprint_nchancb
+    app.register_blueprint(blueprint_nchancb)
 
     return app
 
