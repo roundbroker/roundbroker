@@ -54,10 +54,18 @@ var collectCmd = &cobra.Command{
 			case content := <-re:
 				// create receiving struct to parse events in response
 				c := struct {
-					URIAppend string            `json:"uri_append"`
-					Method    string            `json:"method"`
-					Headers   map[string]string `json:"headers"`
-					Body      []byte            `json:"body"`
+					PublishedAt string `json:"published_at"`
+					PublishedOn string `json:"published_on"`
+					ReceivedAt  string `json:"received_at"`
+					Request     struct {
+						ExtraPath string            `json:"extra_path"`
+						Body      []byte            `json:"body"`
+						Headers   map[string]string `json:"headers"`
+						Args      string
+					} `json:""`
+					Method    string `json:"method"`
+					SourceIP  string `json:"source_ip"`
+					SourceURL string `json:"source_url"`
 				}{}
 
 				data, err := ioutil.ReadAll(content.Data)
@@ -65,32 +73,35 @@ var collectCmd = &cobra.Command{
 					log.Errorf("Failed to read data from input message: %v", err)
 					continue
 				}
-				logrus.Debug(string(data))
+				logrus.Debugf("[RAW CONTENT]: %v", string(data))
 
 				err = json.Unmarshal(data, &c)
 				if err != nil {
 					log.Errorf("Failed to decode body content as json response: %v", err)
 					continue
 				}
-				logrus.Debugf("parsed object: %v", c)
+				logrus.Debugf("[PARSED STRUCT]: %v", c)
 
 				// rebuild headers to the internal format. (in case the future struct from python is valid)
 				headers := make(map[string][]string)
-				for k, v := range c.Headers {
+				for k, v := range c.Request.Headers {
 					headers[k] = []string{v}
 				}
 
-				jobs <- turnt.Job{
-					ID: uuid.NewV4().String(),
+				j := turnt.Job{
+					ID: content.ID,
 					Request: turnt.Request{
 						ID:      uuid.NewV4().String(),
 						Method:  c.Method,
 						Headers: headers,
-						Body:    c.Body,
-						URI:     viper.GetString("destination.service.url") + c.URIAppend,
+						Body:    c.Request.Body,
+						URI:     viper.GetString("destination.service.url") + "/" + c.Request.ExtraPath,
 					},
 					StartDate: time.Now(),
 				}
+				logrus.Debugf("[JOB]: %v", j)
+				jobs <- j
+
 				turnt.JobGauge.Inc()
 				turnt.RequestCount.Inc()
 			}
