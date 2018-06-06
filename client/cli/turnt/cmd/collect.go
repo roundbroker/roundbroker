@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"io/ioutil"
@@ -26,15 +27,19 @@ var collectCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		logrus.Infof("Starting SSE client to server %v", viper.GetString("server.address"))
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
 		go exposeMetrics(":8080", "/metrics")
 
 		// create workers channel. This chan is used to announce that a worker can accept jobs
 		workers := make(chan chan turnt.Job, viper.GetInt("workers"))
+		stchan := make(chan turnt.Job)
 
 		// start workers. Number of parallel workers is set by WORKER env variable
 		for i := 0; i < viper.GetInt("workers"); i++ {
-			go turnt.Worker{}.Start(workers)
+			go turnt.Worker{StoreIDs: stchan}.Start(workers)
 		}
+		go turnt.StoreRequestID(ctx, stchan)
 
 		// create jobs channel to pass jobs around
 		jobs := make(chan turnt.Job, 1000)
