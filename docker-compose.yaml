@@ -5,6 +5,7 @@ services:
     build: ./nchan
     depends_on:
       - redis-master
+      - turntable
 
   redis-master:
     image: redis:4.0
@@ -12,7 +13,6 @@ services:
   turntable:
     build: ./webapp
     depends_on:
-      - nchan
       - database
     environment:
       NCHAN_ROOT_URI: http://nchan

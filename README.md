@@ -61,5 +61,16 @@ One could easily develop its own client to retrieve data from the APITurntable s
 ## URLs
 
   - Web UI : http://localhost/ui
-  - Push base URL : http://localhost/pivot/
-  - Consumer base URL : http://localhost/sub/
+  - Producer URL : http://localhost/p
+  - Consumer URL : http://localhost/c
+
+## Getting started
+
+   1. start the docker stack
+   2. use your browser to sign-up/in and
+   2.1. create a pivot
+   2.2. create a generic producer (remember its `uuid` later refered as `$producer_uuid`)
+   2.3. create a generic consumer (remember its `uuid` later refered as `$consumer_uuid` )
+   3. send webcalls to `http://localhost/p/$producer_uuid/your/custom/path`
+   4. consume webcalls by visiting in SSE `http://localhost/c` with header `X-CONSUMER-UUID=$consumer_uuid`
+   
