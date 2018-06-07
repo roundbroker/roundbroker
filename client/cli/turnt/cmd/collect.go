@@ -172,8 +172,16 @@ func init() {
 }
 
 func createSSERequest() {
-	// lastReqID := l.Load()
 	lastReqID := viper.GetString("collect.offset")
+	var err error
+	if lastReqID == "" {
+		lastReqID, err = turnt.LoadRequestID()
+		if err != nil {
+			logrus.WithField("err", err).Infof("Failed to read the store file of the consumed eventsID. If it doesn't exist, it will be created at with the first event received.")
+		}
+	}
+
+	cuuid := viper.GetString("consumer.uuid")
 	sse.GetReq = func(verb, uri string, body io.Reader) (*http.Request, error) {
 		req, err := http.NewRequest(verb, uri, body)
 		if err != nil {
@@ -182,6 +190,10 @@ func createSSERequest() {
 		if lastReqID != "" {
 			req.Header.Add("Last-Event-Id", lastReqID)
 		}
+		if cuuid != "" {
+			req.Header.Add("X-Consumer-Uuid", cuuid)
+		}
+
 		return req, nil
 	}
 }

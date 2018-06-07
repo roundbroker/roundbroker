@@ -12,6 +12,11 @@ import (
 
 var cfgFile string
 
+// envDoc is the list of environment variable that you want to document
+var envDoc map[string]string
+
+const serviceName = "turnt"
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "turnt",
@@ -40,9 +45,6 @@ func init() {
 
 }
 
-// envDoc is the list of environment variable that you want to document
-var envDoc map[string]string
-
 func rc(key, env string, defVal interface{}, doc bool) {
 	viper.BindEnv(key, env)
 	viper.SetDefault(key, defVal)
@@ -56,11 +58,12 @@ func initConfig() {
 	envDoc = make(map[string]string)
 
 	rc("verbose", "VERBOSE", false, true)
-	rc("consumer.secret_key", "CONSUMER_SECRET_KEY", "", true)
-	rc("consumer.public_key", "CONSUMER_PUBLIC_KEY", "", true)
-	rc("server.address", "SERVER_ADDRESS", "https://apiturntables.io", true)
+	rc("consumer.uuid", "CONSUMER_UUID", "", true)
+	rc("server.address", "SERVER_ADDRESS", "https://apiturntables.io/c", true)
 	rc("destination.service.url", "DESTINATION_SERVICE_URL", "http://yourAPI.local/v1/test", true)
 	rc("workers", "WORKERS", 4, true)
+
+	viper.Set("serviceName", serviceName)
 
 	var envUsage string
 	envUsage += "\nConfigurable Environment variables:\n"
