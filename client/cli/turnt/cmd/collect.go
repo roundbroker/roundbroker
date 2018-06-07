@@ -27,7 +27,7 @@ var collectCmd = &cobra.Command{
 	Short: "collect is the command that allows to retrieve API Calls from apiturntables.io and forward them to the underlying service",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		logrus.Infof("Starting SSE client to server %v", viper.GetString("server.address"))
+		logrus.Infof("Starting SSE client to server %q. Redirecting requests to %q", viper.GetString("server.address"), viper.GetString("destination.service.url"))
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 		go exposeMetrics(":8080", "/metrics")
