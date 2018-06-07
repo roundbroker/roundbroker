@@ -154,6 +154,14 @@ func init() {
 	rootCmd.AddCommand(collectCmd)
 	// collectCmd.Flags().StringP("url", "u", "http://turntable.io/", "Url used to collect the API's request to replay")
 	// collectCmd.Flags().StringP("target-type", "t", "final", `Type of destination. It can be "final" for proxying request or another supported type (ex: rabbitmq, redis, another apiturntable server, etc.)`)
+	collectCmd.Flags().StringP("server", "s", "", "This set the pivot URL where you need to retrieve query to replay locally")
+	viper.BindPFlag("server.address", collectCmd.Flags().Lookup("server"))
+
+	collectCmd.Flags().StringP("destination", "d", "", "URL to send the received request to (http://internalapi:8081/v1/secretKey/")
+	viper.BindPFlag("destination.service.url", collectCmd.Flags().Lookup("destination"))
+
+	collectCmd.Flags().StringP("offset", "o", "", "Offset at which you want to start collect from")
+	viper.BindPFlag("collect.offset", collectCmd.Flags().Lookup("offset"))
 
 	prometheus.MustRegister(
 		turnt.WorkerGauge,
@@ -165,7 +173,7 @@ func init() {
 
 func createSSERequest() {
 	// lastReqID := l.Load()
-	lastReqID := ""
+	lastReqID := viper.GetString("collect.offset")
 	sse.GetReq = func(verb, uri string, body io.Reader) (*http.Request, error) {
 		req, err := http.NewRequest(verb, uri, body)
 		if err != nil {
