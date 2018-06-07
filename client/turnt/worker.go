@@ -57,7 +57,6 @@ func (w Worker) Start(workers chan chan Job) {
 					continue
 				}
 				// add headers to the request
-				_ = req
 				for k, v := range job.Request.Headers {
 					for _, val := range v {
 						req.Header.Add(k, val)

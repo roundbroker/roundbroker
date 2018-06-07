@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -52,6 +53,11 @@ var collectCmd = &cobra.Command{
 		createSSERequest()
 		go sse.Notify(viper.GetString("server.address"), re)
 
+		baseURL, err := url.Parse(viper.GetString("destination.service.url") + "/")
+		if err != nil {
+			log.Fatalf("Failed to parse destination service URL as valid URL: %v", viper.GetString("destination.service.url"))
+		}
+
 		// main loop. This loop retrieve requests from sse server and pass them to the
 		// jobs chan.
 		for {
@@ -87,6 +93,14 @@ var collectCmd = &cobra.Command{
 				}
 				logrus.Debugf("[PARSED STRUCT]: %v", c)
 
+				// parse extrapath and add query arguments
+				extraPath, err := url.Parse(c.Request.ExtraPath)
+				if err != nil {
+					log.Errorf(`Failed to decode "extra_path" as valid path. %q`, c.Request.ExtraPath)
+					continue
+				}
+				extraPath.RawQuery = c.Request.Args
+
 				// rebuild headers to the internal format. (in case the future struct from python is valid)
 				headers := make(map[string][]string)
 				for k, v := range c.Request.Headers {
@@ -100,7 +114,7 @@ var collectCmd = &cobra.Command{
 						Method:  c.Method,
 						Headers: headers,
 						Body:    c.Request.Body,
-						URI:     viper.GetString("destination.service.url") + "/" + c.Request.ExtraPath,
+						URI:     baseURL.ResolveReference(extraPath).String(),
 					},
 					StartDate: time.Now(),
 				}
