@@ -70,12 +70,27 @@
 
     <a href="#" class="image featured"><img src="{{ url_for('.static', filename='images/pic08.jpg')}}" alt="" /></a>
 
-    <p>Tincidunt eu elit diam magnis pretium accumsan etiam id urna. Ridiculus
-      ultricies curae quis et rhoncus velit. Lobortis elementum aliquet nec vitae
-      laoreet eget cubilia quam non etiam odio tincidunt montes. Elementum sem
-      parturient nulla quam placerat viverra mauris non cum elit tempus ullamcorper
-      dolor. Libero rutrum ut lacinia donec curae mus vel quisque sociis nec
-      ornare iaculis.</p>
+    <form action="" method="post">
+      {{ form.hidden_tag() }}
+      <div class="form-group">
+	{{ form.email.label }}
+	{{ form.email(size=32,readonly=true) }}
+      </div>
+      <div class="form-group">
+	{{ form.username.label }}
+	{{ form.username(size=32) }}
+      </div>
+      <div class="form-group">
+	{{ form.password1.label }}
+	{{ form.password1(size=32) }}
+      </div>
+      <div class="form-group">
+	{{ form.password2.label }}
+	{{ form.password2(size=32) }}
+      </div>
+      {{ form.submit() }}
+    </form>
+    </p>
 
   </div>
 </section>

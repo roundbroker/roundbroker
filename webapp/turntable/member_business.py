@@ -1,4 +1,5 @@
 # encoding: utf-8
+from sqlalchemy.exc import IntegrityError
 
 from turntable.extensions import db
 from turntable.models import Pivot
@@ -7,7 +8,7 @@ from turntable.models import Consumer
 from turntable.exceptions import MaxNumberOfPivotReachedException
 from turntable.exceptions import MaxNumberOfProducerReachedException
 from turntable.exceptions import MaxNumberOfConsumerReachedException
-from turntable.exceptions import UnauthorizedException
+from turntable.exceptions import UnauthorizedException, DuplicateUserException
 
 
 class MemberBusiness(object):
@@ -16,6 +17,23 @@ class MemberBusiness(object):
         self.member = member
         if self.member is None:
             raise UnauthorizedException()
+
+    def update_account(self, username=None, password=None):
+        """
+        Updates the account
+        """
+
+        if username is not None:
+            self.member.username = username
+        if password is not None:
+            self.member.set_password(password)
+
+        try:
+            db.session.commit()
+        except IntegrityError:
+            raise DuplicateUserException()
+
+        return self.member
 
     def create_pivot(self, name, description):
         """
@@ -26,7 +44,7 @@ class MemberBusiness(object):
         pivot.name = name
         pivot.description = description
         pivot.created_by = self.member.id
-        
+
         # enforce the max number of pivot per member
         if self.member.can_create_more_pivot():
             db.session.add(pivot)
@@ -132,4 +150,3 @@ class MemberBusiness(object):
         db.session.commit()
 
         return consumer
-

@@ -13,6 +13,7 @@ from .forms import NewGithubProducerForm
 from .forms import SignUpWithEmailForm
 from .forms import LoginWithEmailForm
 from .forms import NewGenericConsumerForm
+from .forms import UpdateAccountForm
 
 from turntable.extensions import db, github
 from turntable.models import User, Hook, Pivot
@@ -26,10 +27,18 @@ def before_request():
     if 'user_id' in session:
         g.user = User.query.get(session['user_id'])
 
-@web.route('/')
+@web.route('/', methods=['GET', 'POST'])
 def index():
     if g.user:
-        return render_template('web/index_member.html')
+        form = UpdateAccountForm(obj=g.user)
+
+        if form.validate_on_submit():
+            MemberBusiness(g.user).update_account(
+                username=form.username.data,
+                password=form.password1.data)
+
+            flash('Your account has been updated')
+        return render_template('web/index_member.html', form=form)
     else:
         return render_template('web/index_visitor.html')
 
@@ -37,7 +46,6 @@ def index():
 def signup():
     form = SignUpWithEmailForm()
     if form.validate_on_submit():
-
         try:
             user = VisitorBusiness().create_user(
                 username=form.username.data,
@@ -52,6 +60,7 @@ def signup():
 
         return redirect(next_url)
     else:
+
         return render_template('web/sign-up.html', form=form)
 
 @web.route('/login', methods=['GET', 'POST'])
