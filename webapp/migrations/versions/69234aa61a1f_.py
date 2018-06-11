@@ -7,7 +7,7 @@ Create Date: 2018-05-29 09:38:14.140640
 """
 from alembic import op
 import sqlalchemy as sa
-
+from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = '69234aa61a1f'
@@ -87,6 +87,16 @@ def upgrade():
     sa.ForeignKeyConstraint(['pivot_id'], ['pivot.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('webcall',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('uuid', sa.String(length=36), nullable=False),
+    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
+    sa.Column('published_on', sa.String(length=36), nullable=True),
+    sa.Column('published_at', sa.DateTime(), nullable=True),
+    sa.Column('request', postgresql.JSON(astext_type=sa.Text()), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
     # ### end Alembic commands ###
 
 
@@ -99,4 +109,5 @@ def downgrade():
     op.drop_index(op.f('ix_user_email'), table_name='user')
     op.drop_table('user')
     op.drop_table('hook')
+    op.drop_table('webcapp')    
     # ### end Alembic commands ###

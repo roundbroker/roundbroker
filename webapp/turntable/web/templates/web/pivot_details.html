@@ -4,17 +4,10 @@
 <section id="summary" class="two">
   <div class="container">
     <header>
-      <h2>Pivot Summary</h2>
+      <h2>Pivot {{ pivot.name }}</h2>
     </header>
-    <ul>
-      <li>Name: {{ pivot.name }}</li>
-      <li>Number API Calls: > 10k (todo)</li>
-      <li>Description: {{ pivot.description }}</li>
-    </ul>
-    <h3>Statistics</h3>
-    <ul>
-      <li>Queued messages: <b>{{ pivot.channel.nb_queued_messages }}</b></li>
-      <li>Active consumers: <b>{{ pivot.channel.nb_subscribers }}</b></li>
+    <p>{{ pivot.description }}</p>
+
   </div>
 </section>
 
@@ -26,27 +19,29 @@
 	  <h2>Producers <a href="{{ url_for('web.create_producer', pivot_uuid=pivot.uuid) }}"><i class="fa fa-plus"></i></a></h2> 
 	</header>
 	<ul>
+	  
 	  {% for producer in pivot.producers %}
-	  <div class="panel panel-primary" style="border:1px solid #000000">
+	  <div class="panel panel-primary">
 	    <div class="panel-heading">
 	      <a href="{{ url_for('web.producer_details', pivot_uuid=pivot.uuid, producer_uuid=producer.uuid) }}">
 		<h3 class="panel-title pull-left">Producer #{{ producer.id }}</h3>
 	      </a>
-	      <a href="#"><i class="fa fa-pencil"></i></a>
-	      <a href="#"><i class="fa fa-trash"></i></a>
+	      <span class="menu">
+		<a href="#"><i class="fa fa-pencil"></i></a>
+		<a href="#"><i class="fa fa-trash"></i></a>
+		</span>
 	    </div>
 	    <div class="panel-body">
-	      <p>{{ producer.description }}</p>
 	      <p>
 		<ul>
 		  <li><strong>URL: </strong> {{ producer.url }}</li>
-		  <li><strong>Type: </strong>github</li>
-		  <li><strong>Stats: </strong><a href="#">12,098 messages</a> (<a href="#">123 refused</a>)</li>
+		  
 		</ul>
 	      </p>
 	    </div>
 	  </div>
 	  {% endfor %}
+
 	</ul>
 
       </div>
@@ -55,18 +50,19 @@
 	  <h2>Consumers <a href="{{ url_for('web.create_consumer', pivot_uuid=pivot.uuid) }}"><i class="fa fa-plus"></i></a></h2>
 	</header>
 	{% for consumer in pivot.consumers %}
-	<div class="panel panel-primary" style="border:1px solid #000000">
+	<div class="panel panel-primary">
 	  <div class="panel-heading">
 	    <h3 class="panel-title pull-left">Consumer #{{ consumer.id }}</h3>
-	    <a href="#"><i class="fa fa-pencil"></i></a>
-	    <a href="#"><i class="fa fa-trash"></i></a>
+	    <span class="menu">
+	      <a href="#"><i class="fa fa-pencil"></i></a>
+	      <a href="#"><i class="fa fa-trash"></i></a>
+	      </span>
 	  </div>
 	  <div class="panel-body">
-	    <p>{{ consumer.description }}</p>
 	    <p>
 	      <ul>
 		<li><strong>URL: </strong> {{ consumer.url }}</li>
-		<li><strong>Stats: </strong><a href="#">12,098 messages consumed</a> (<a href="#">123 refused</a>)</li>
+
 	      </ul>
 	    </p>
 	  </div>
@@ -81,19 +77,32 @@
 
 <section id="live" class="four">
   <header>
-    <h2>Live overview</h2>
+    <h2>Latest web calls</h2>
     </header>
     <div class="container">
 
+
+      
   <div class="panel panel-primary" style="border:1px solid #000000">
     <div class="panel-body">
       <table class="default" id="live-table">
 	<thead>
 	  <tr>
-	    <th>data</th>
+	    <td>uuid</th>
+            <th>received at</th>
+            <th>request</th>
 	  </tr>  
 	</thead>
 	<tbody>
+	  {% for webcall in pivot.get_last_webcalls() %}
+	  <tr>
+	    <td>{{ webcall.uuid }}</td>
+	    <td>{{ webcall.published_at }}</td>
+	    <td>{{ webcall.request }}</td>
+	  </tr>
+	  {% endfor %}
+
+	  
 	</tbody>
       </table>
 </div>
