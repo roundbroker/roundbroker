@@ -6,6 +6,7 @@ from hashlib import md5
 import json
 from json import JSONEncoder
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.dialects.postgresql import JSON
 
 from flask import current_app
 from turntable.extensions import db
@@ -74,6 +75,8 @@ class Pivot(db.Model, BaseModelMixin, NchanChannelModelMixin):
     def nb_consumers(self):
         return db.session.query(Consumer).filter_by(pivot_id=self.id).count()
 
+    def get_last_webcalls(self):
+        return WebCall.query.filter_by(published_on=self.uuid).order_by(WebCall.published_at.desc()).limit(10).all()
 
 class Consumer(db.Model, BaseModelMixin, NchanChannelModelMixin):
 
@@ -228,20 +231,28 @@ class CustomJsonEncoder(JSONEncoder):
         return str(o)
 
 
-class WebCall(object):
+class WebCall(db.Model, BaseModelMixin):
 
+    __tablename__ = 'webcall'
+    
+    uuid = db.Column(db.String(36), nullable=False)
+    published_at = db.Column(db.DateTime(), nullable=True)
+    published_on = db.Column(db.String(36), nullable=True)
+    request = db.Column(JSON)
+    
     def __init__(self, webcall_request):
-        self.received_at = datetime.utcnow()
-        self.request = webcall_request
+        self.uuid = str(uuid.uuid4())
+        self.request = webcall_request.to_dict()
         self.published_on = None
         self.published_at = None
+        
 
     def to_dict(self):
         return {
-            'received_at': self.received_at,
+            'received_at': self.created_at,
             'published_on': self.published_on,
             'published_at': self.published_at,
-            'request': self.request.to_dict()
+            'request': self.request
         }
 
     def to_json(self):

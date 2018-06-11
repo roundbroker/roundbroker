@@ -2560,3 +2560,20 @@
 				}
 
 	}
+
+
+.panel {
+    display: block;
+}
+
+.panel .panel-heading {
+    border-top:1px solid #000000;
+}
+.panel .panel-heading span.menu {
+    float:right;
+}
+.panel .panel-body {
+    clear:both;
+    text-align: left;
+    border-top: 1px solid #000000;
+}
