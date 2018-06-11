@@ -7,9 +7,11 @@ class Config(object):
 
     # Public Domain
     PUBLIC_DOMAIN = os.environ.get('PUBLIC_DOMAIN', '127.0.0.1')
+
+    PUBLIC_ROOT_URL = "http://{}".format(PUBLIC_DOMAIN)
     
     # Public URLs
-    HOOK_ROOT_URL = "http://{}/hook".format(PUBLIC_DOMAIN)
+    HOOK_ROOT_URL = "{}/hook".format(PUBLIC_ROOT_URL)
 
     # Secret key
     SECRET_KEY = os.environ.get('APP_SECRET_KEY', 'This is NOT a great secret !')
