@@ -91,7 +91,7 @@ class Consumer(db.Model, BaseModelMixin, NchanChannelModelMixin):
 
     @property
     def url(self):
-        return '{}/ci/{}'.format(Config.PUBLIC_DOMAIN, self.url_path)
+        return '{}/c/{}'.format(Config.PUBLIC_ROOT_URL, self.uuid)
 
 
 class Producer(db.Model, BaseModelMixin, NchanChannelModelMixin):
@@ -110,7 +110,7 @@ class Producer(db.Model, BaseModelMixin, NchanChannelModelMixin):
 
     @property
     def url(self):
-        return '{}/pivot/{}'.format(Config.PUBLIC_DOMAIN, self.url_path)
+        return '{}/p/{}'.format(Config.PUBLIC_ROOT_URL, self.uuid)
 
     @property
     def github_secret(self):
