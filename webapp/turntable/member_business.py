@@ -48,6 +48,25 @@ class MemberBusiness(object):
         # enforce the max number of pivot per member
         if self.member.can_create_more_pivot():
             db.session.add(pivot)
+
+            # lets create a default producer and consumer
+            producer = Producer()
+            producer.name = name
+            producer.description = description
+            producer.url_path = name
+            producer.ptype = "generic"
+            pivot.producers.append(producer)
+            db.session.add(producer)
+            
+            consumer = Consumer()
+            consumer.pivot_id = pivot.id
+            consumer.name = name
+            consumer.description = description
+            consumer.url_path = name
+            consumer.ctype = "generic"
+            pivot.consumers.append(consumer)
+            db.session.add(consumer)
+            
             db.session.commit()
         else:
             raise MaxNumberOfPivotReachedException()
@@ -80,13 +99,11 @@ class MemberBusiness(object):
 
         # enforce the max number of producer per pivot
         if pivot.can_have_more_producer():
-            db.session.add(pivot)
+            db.session.add(producer)
             db.session.commit()
         else:
             raise MaxNumberOfProducerReachedException()
 
-        db.session.add(producer)
-        db.session.commit()
 
         return producer
 
@@ -141,12 +158,10 @@ class MemberBusiness(object):
 
         # enforce the max number of consumer per pivot
         if pivot.can_have_more_consumer():
-            db.session.add(pivot)
+            db.session.add(consumer)
             db.session.commit()
         else:
             raise MaxNumberOfConsumerReachedException()
 
-        db.session.add(consumer)
-        db.session.commit()
 
         return consumer

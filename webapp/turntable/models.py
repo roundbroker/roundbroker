@@ -56,7 +56,7 @@ class Pivot(db.Model, BaseModelMixin, NchanChannelModelMixin):
         the maximum number of producer it is allowed to
         """
 
-        return self.nb_producers < 5
+        return self.nb_producers < 2
 
     def can_have_more_consumer(self):
         """
@@ -64,7 +64,7 @@ class Pivot(db.Model, BaseModelMixin, NchanChannelModelMixin):
         the maximum number of consumer it is allowed to
         """
 
-        return self.nb_consumers < 5
+        return self.nb_consumers < 2
 
     @property
     def nb_producers(self):
