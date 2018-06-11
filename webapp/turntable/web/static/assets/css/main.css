@@ -1903,7 +1903,7 @@
 		color: #fff !important;
 		text-decoration: none;
 		padding: 0.75em 2.5em 0.75em 2.5em;
-		background-color: #8ebebc;
+		background-color: #be8e90;
 		border: 0;
 		cursor: pointer;
 		background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15)), url("images/overlay.png");
@@ -2182,8 +2182,10 @@
 			}
 
 			#main > section.one {
-				background-color: #81918E;
-				background-image: url("../../images/banner.jpg");
+			    background-image: url("../../images/banner2.jpg");
+			    //background-color: #81918E;
+			    //background-color: rgba(12, 14, 14, 0.7);
+			    box-shadow: inset 0 0 0 1000px rgba(12,14,14,.7);
 			}
 
 			#main > section.two {
