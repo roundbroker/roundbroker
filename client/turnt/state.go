@@ -42,7 +42,7 @@ func LoadRequestID() (string, error) {
 func save(request Job, serviceName, cuuid string) error {
 	spath := path.Join(storePath, serviceName, cuuid)
 
-	if _, err := os.Stat(spath); os.IsNotExist(err) {
+	if _, err := os.Stat(path.Dir(spath)); os.IsNotExist(err) {
 		err = os.Mkdir(path.Dir(spath), 0755)
 		if err != nil {
 			return err
