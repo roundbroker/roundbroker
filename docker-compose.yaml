@@ -17,6 +17,7 @@ services:
     environment:
       NCHAN_ROOT_URI: http://nchan
       FLASK_DEBUG: "true"
+      PUBLIC_DOMAIN: "159.89.97.234"
       DATABASE_URI: postgresql://turntable:PleaseChangeMe!@database/turntable
 
   database:
