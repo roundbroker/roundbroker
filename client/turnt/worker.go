@@ -26,7 +26,9 @@ import (
 //    }()
 //  }
 
-type Worker struct{}
+type Worker struct {
+	StoreIDs chan Job
+}
 
 // Start is the function to start a worker job
 func (w Worker) Start(workers chan chan Job) {
@@ -55,7 +57,6 @@ func (w Worker) Start(workers chan chan Job) {
 					continue
 				}
 				// add headers to the request
-				_ = req
 				for k, v := range job.Request.Headers {
 					for _, val := range v {
 						req.Header.Add(k, val)
@@ -82,6 +83,9 @@ func (w Worker) Start(workers chan chan Job) {
 				f["response"] = string(rc)
 				f["responseStatusCode"] = resp.StatusCode
 				logrus.WithFields(f).Info("Request sent to server")
+
+				// save the fact that this event has been handled
+				w.StoreIDs <- job
 
 			}
 		}
