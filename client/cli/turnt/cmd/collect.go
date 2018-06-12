@@ -73,8 +73,8 @@ var collectCmd = &cobra.Command{
 						Body      string            `json:"body"`
 						Headers   map[string]string `json:"headers"`
 						Args      string
+						Method    string `json:"method"`
 					} `json:""`
-					Method    string `json:"method"`
 					SourceIP  string `json:"source_ip"`
 					SourceURL string `json:"source_url"`
 				}{}
@@ -111,7 +111,7 @@ var collectCmd = &cobra.Command{
 					ID: content.ID,
 					Request: turnt.Request{
 						ID:      uuid.NewV4().String(),
-						Method:  c.Method,
+						Method:  c.Request.Method,
 						Headers: headers,
 						Body:    c.Request.Body,
 						URI:     baseURL.ResolveReference(extraPath).String(),
