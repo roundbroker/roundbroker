@@ -8,6 +8,7 @@ from turntable.models import WebCall, WebCallRequestHttp11
 from flask import request, g, session, redirect, url_for, current_app
 from urllib.parse import urlparse
 import json
+import hashlib
 
 supported_http_methods = ('GET', 'POST', 'HEAD', 'PUT', 'DELETE', 'PATCH')
 
@@ -23,11 +24,25 @@ def produce(producer_uuid, extra_path=None):
         # Retrieve the raw query part of the query
         args = urlparse(request.url).query
 
+        username = "turntable"
+        gravatar_url = "https://www.gravatar.com/avatar/{}".format(hashlib.md5(username.encode('utf-8')).hexdigest())
+
+        # lets transform this message into a mattermost query
+        payload = {
+            "channel": "platform-changes",
+            "username": username,
+            "icon_url": gravatar_url,
+            "text": request.get_data(as_text=True)
+        }
+
+        headers = {k: v for k, v in request.headers.items()}
+        headers['Content-Type'] = 'application/json'
+
         httpreq = WebCallRequestHttp11(
             method=request.method,
             headers={k: v for k, v in request.headers.items()},
             cookies=request.cookies,
-            body=request.get_data(as_text=True),
+            body=payload,
             source_ip=request.remote_addr,
             source_url=request.url,
             extra_path=extra_path,
