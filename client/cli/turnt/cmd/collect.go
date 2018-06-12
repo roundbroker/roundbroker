@@ -53,7 +53,7 @@ var collectCmd = &cobra.Command{
 		createSSERequest()
 		go sse.Notify(viper.GetString("server.address"), re)
 
-		baseURL, err := url.Parse(viper.GetString("destination.service.url") + "/")
+		baseURL, err := url.Parse(viper.GetString("destination.service.url"))
 		if err != nil {
 			log.Fatalf("Failed to parse destination service URL as valid URL: %v", viper.GetString("destination.service.url"))
 		}
