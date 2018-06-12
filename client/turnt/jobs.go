@@ -24,7 +24,7 @@ type Request struct {
 	// Headers used in the request
 	Headers map[string][]string
 	// Body is the content of the request
-	Body []byte
+	Body string
 	// URI is the path used for the request
 	URI string
 }

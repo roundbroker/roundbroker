@@ -70,7 +70,7 @@ var collectCmd = &cobra.Command{
 					ReceivedAt  string `json:"received_at"`
 					Request     struct {
 						ExtraPath string            `json:"extra_path"`
-						Body      []byte            `json:"body"`
+						Body      string            `json:"body"`
 						Headers   map[string]string `json:"headers"`
 						Args      string
 					} `json:""`

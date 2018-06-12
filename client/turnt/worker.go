@@ -1,9 +1,9 @@
 package turnt
 
 import (
-	"bytes"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -50,7 +50,7 @@ func (w Worker) Start(workers chan chan Job) {
 				}
 
 				// build request based on received job
-				req, err := http.NewRequest(job.Request.Method, job.Request.URI, bytes.NewReader(job.Request.Body))
+				req, err := http.NewRequest(job.Request.Method, job.Request.URI, strings.NewReader(job.Request.Body))
 				if err != nil {
 					f["error"] = err
 					logrus.WithFields(f).Errorf("Failed to build request from job")
