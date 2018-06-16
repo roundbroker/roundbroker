@@ -53,7 +53,7 @@ var collectCmd = &cobra.Command{
 		createSSERequest()
 		go sse.Notify(viper.GetString("server.address"), re)
 
-		baseURL, err := url.Parse(viper.GetString("destination.service.url") + "/")
+		baseURL, err := url.Parse(viper.GetString("destination.service.url"))
 		if err != nil {
 			log.Fatalf("Failed to parse destination service URL as valid URL: %v", viper.GetString("destination.service.url"))
 		}
@@ -70,11 +70,11 @@ var collectCmd = &cobra.Command{
 					ReceivedAt  string `json:"received_at"`
 					Request     struct {
 						ExtraPath string            `json:"extra_path"`
-						Body      []byte            `json:"body"`
+						Body      string            `json:"body"`
 						Headers   map[string]string `json:"headers"`
 						Args      string
+						Method    string `json:"method"`
 					} `json:""`
-					Method    string `json:"method"`
 					SourceIP  string `json:"source_ip"`
 					SourceURL string `json:"source_url"`
 				}{}
@@ -111,7 +111,7 @@ var collectCmd = &cobra.Command{
 					ID: content.ID,
 					Request: turnt.Request{
 						ID:      uuid.NewV4().String(),
-						Method:  c.Method,
+						Method:  c.Request.Method,
 						Headers: headers,
 						Body:    c.Request.Body,
 						URI:     baseURL.ResolveReference(extraPath).String(),
