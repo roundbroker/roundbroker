@@ -1,32 +1,36 @@
-version: '3.1'
+version: '3.2'
 
 services:
   nchan:
     build: ./nchan
     depends_on:
       - redis-master
-      - turntable
+      - webapp
 
   redis-master:
     image: redis:4.0
 
-  turntable:
+  webapp:
     build: ./webapp
     depends_on:
       - database
+    volumes:
+      - type: bind
+        source: ./webapp
+        target: /usr/src/app
     environment:
       NCHAN_ROOT_URI: http://nchan
       FLASK_DEBUG: "true"
-      PUBLIC_DOMAIN: "159.89.97.234"
-      DATABASE_URI: postgresql://turntable:PleaseChangeMe!@database/turntable
+      PUBLIC_DOMAIN: "roundbroker.io"
+      DATABASE_URI: postgresql://webapp:PleaseChangeMe!@database/roundbroker
 
   database:
     image: postgres:10
     restart: always
     environment:
-      POSTGRES_USER: turntable
+      POSTGRES_USER: webapp
       POSTGRES_PASSWORD: PleaseChangeMe!
-      POSTGRES_DB: turntable
+      POSTGRES_DB: roundbroker
 
   reverse_proxy:
     build: ./reverse_proxy
@@ -34,4 +38,4 @@ services:
       - 80:80
     depends_on:
       - nchan
-      - turntable
+      - webapp

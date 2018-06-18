@@ -1,14 +1,14 @@
 # encoding: utf-8
 from sqlalchemy.exc import IntegrityError
 
-from turntable.extensions import db
-from turntable.models import Pivot
-from turntable.models import Producer
-from turntable.models import Consumer
-from turntable.exceptions import MaxNumberOfPivotReachedException
-from turntable.exceptions import MaxNumberOfProducerReachedException
-from turntable.exceptions import MaxNumberOfConsumerReachedException
-from turntable.exceptions import UnauthorizedException, DuplicateUserException
+from roundbroker.extensions import db
+from roundbroker.models import Pivot
+from roundbroker.models import Producer
+from roundbroker.models import Consumer
+from roundbroker.exceptions import MaxNumberOfPivotReachedException
+from roundbroker.exceptions import MaxNumberOfProducerReachedException
+from roundbroker.exceptions import MaxNumberOfConsumerReachedException
+from roundbroker.exceptions import UnauthorizedException, DuplicateUserException
 
 
 class MemberBusiness(object):

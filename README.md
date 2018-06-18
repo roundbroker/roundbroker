@@ -1,4 +1,4 @@
-# APITurntable
+# RoundBroker
 
 ## Web Application
 
@@ -9,8 +9,8 @@ Developed in Python3, it has few library requirements that must be installed pri
     > $ python3 -m venv venv
     > $ source venv/bin/activate
     (venv) > $ pip3 install -r requirements.txt
-    (venv) > $ FLASK_APP=turntable flask db upgrade
-    (venv) > $ FLASK_APP=turntable FLASK_DEBUG="true" flask run --port 4242
+    (venv) > $ FLASK_APP=roundbroker flask db upgrade
+    (venv) > $ FLASK_APP=roundbroker FLASK_DEBUG="true" flask run --port 4242
 
 It accepts the following environment variable to ease its configuration:
 
@@ -24,7 +24,7 @@ It accepts the following environment variable to ease its configuration:
 | `NCHAN_ROOT_URI` | Root URI the nchan server is exposed on | http://127.0.0.1:8081 |
 
 The application leverages Github OAuth for user authentication. It requires a `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` that must be attached to a declared OAuth Github App. One that want to start its own instance of the application must declare a github OAuth app with the following information:
-* **Application name**: `turntable` (or any other string)
+* **Application name**: `roundbroker` (or any other string)
 * **Authorization callback URL**: `http://$PUBLIC_DOMAIN$/ui/oauth-github` (you replaced `$PUBLIC_DOMAIN$` by its value)
 
 Once declared on Github, both the obtained `client id` and `client secret` provided by github must be injected in your instance configuration.
@@ -37,12 +37,12 @@ A Docker compose stack is available and allows to quickly start all the required
 You could start the stack by executing the following commands.
 
     docker-compose build
-    docker-compose run turntable /usr/local/bin/flask db upgrade
+    docker-compose run webapp /usr/local/bin/flask db upgrade
     docker-compose up
 
 The `docker-compose.yaml` file could also be used to deploy the server side in Docker Swarm stack:
 
-    docker deploy -c docker-compose.yaml turntable
+    docker deploy -c docker-compose.yaml roundbroker
 
 
 ## Start the official client
@@ -55,7 +55,7 @@ To start the client on the `48a6a147c5474f7e89229072eb02473c` queue, you can exe
     export PIVOT_URL=http://localhost/sub/48a6a147c5474f7e89229072eb02473c
     docker run --rm -it --net="host" -e SERVER_ADDRESS=$PIVOT_URL turnt
 
-One could easily develop its own client to retrieve data from the APITurntable servers.
+One could easily develop its own client to retrieve data from the RoundBroker servers.
 
 
 ## URLs

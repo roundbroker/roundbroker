@@ -15,11 +15,11 @@ from .forms import LoginWithEmailForm
 from .forms import NewGenericConsumerForm
 from .forms import UpdateAccountForm
 
-from turntable.extensions import db, github
-from turntable.models import User, Hook, Pivot
-from turntable.member_business import MemberBusiness
-from turntable.visitor_business import VisitorBusiness
-from turntable import exceptions
+from roundbroker.extensions import db, github
+from roundbroker.models import User, Hook, Pivot
+from roundbroker.member_business import MemberBusiness
+from roundbroker.visitor_business import VisitorBusiness
+from roundbroker import exceptions
 
 @web.before_request
 def before_request():

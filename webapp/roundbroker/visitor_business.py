@@ -2,16 +2,14 @@
 
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
-
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import exc
-from turntable.exceptions import (InvalidProducerException,
+from roundbroker.exceptions import (InvalidProducerException,
                                   InvalidConsumerException,
                                   NchanCommunicationError)
-from turntable.extensions import db
-from turntable.models import Producer, User, Consumer
-from turntable.nchan import NchanChannel, NchanException
-from turntable.exceptions import InvalidProducerException, NchanCommunicationError, DuplicateUserException
+from roundbroker.extensions import db
+from roundbroker.models import Producer, User, Consumer
+from roundbroker.nchan import NchanChannel, NchanException
+from roundbroker.exceptions import InvalidProducerException, NchanCommunicationError, DuplicateUserException
 
 
 class VisitorBusiness(object):
@@ -23,7 +21,7 @@ class VisitorBusiness(object):
         """
         Creates a user with the specified info.
 
-        :raises turntable.exceptions.DuplicateUserException: if equivalent user already exists
+        :raises roundbroker.exceptions.DuplicateUserException: if equivalent user already exists
         """
 
         user = User(username=username, email=email)

@@ -2,7 +2,7 @@
 
 from flask import request, current_app
 from . import blueprint
-from turntable.visitor_business import VisitorBusiness
+from roundbroker.visitor_business import VisitorBusiness
 
 
 @blueprint.route('/channel_id', methods=['GET'])
