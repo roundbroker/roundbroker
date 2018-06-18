@@ -4,7 +4,8 @@ from flask import Blueprint
 
 blueprint = Blueprint(
     'web', __name__,
-    url_prefix='/ui',
+    url_prefix='/',
+    static_url_path='/',
     template_folder='templates',
     static_folder='static')
 

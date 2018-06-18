@@ -60,7 +60,7 @@ One could easily develop its own client to retrieve data from the RoundBroker se
 
 ## URLs
 
-  - Web UI : http://localhost/ui
+  - Web UI : http://localhost/
   - Producer URL : http://localhost/p
   - Consumer URL : http://localhost/c
 
