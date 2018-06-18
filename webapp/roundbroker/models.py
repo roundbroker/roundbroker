@@ -9,9 +9,9 @@ from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.dialects.postgresql import JSON
 
 from flask import current_app
-from turntable.extensions import db
-from turntable.nchan import NchanChannel
-from turntable.settings import Config
+from roundbroker.extensions import db
+from roundbroker.nchan import NchanChannel
+from roundbroker.settings import Config
 from werkzeug.security import check_password_hash, generate_password_hash
 
 

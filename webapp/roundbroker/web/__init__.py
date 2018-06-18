@@ -11,7 +11,7 @@ blueprint = Blueprint(
 from . import resources
 
 from flask import g
-from turntable.extensions import github
+from roundbroker.extensions import github
 
 @github.access_token_getter
 def token_getter():
