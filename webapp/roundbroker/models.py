@@ -90,6 +90,10 @@ class Consumer(db.Model, BaseModelMixin, NchanChannelModelMixin):
         self.uuid = str(uuid.uuid4())
 
     @property
+    def root_url(self):
+        return '{}/c'.format(Config.PUBLIC_ROOT_URL)
+
+    @property
     def url(self):
         return '{}/c/{}'.format(Config.PUBLIC_ROOT_URL, self.uuid)
 
