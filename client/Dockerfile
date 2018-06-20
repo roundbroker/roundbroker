@@ -1,9 +1,9 @@
 FROM golang:1.9-alpine as builder
 
-ENV path /go/src/github.com/gbossert/APITurntable/client
+ENV path /go/src/github.com/roundbroker/roundbroker/client
 
 RUN mkdir -p ${path} && \
-    apk update && apk add git 
+    apk update && apk add git
 COPY . ${path}
 
 RUN cd ${path} && \
@@ -12,6 +12,6 @@ RUN cd ${path} && \
 
 FROM alpine:3.7
 
-COPY --from=builder /go/bin/turnt /turnt
+COPY --from=builder /go/bin/rb /rb
 
-CMD ["/turnt", "collect"]
+CMD ["/rb", "collect"]

@@ -51,9 +51,9 @@ This Git repository contains a client, written in Go. This client is designed to
 
 To start the client on the `48a6a147c5474f7e89229072eb02473c` queue, you can execute the following commands:
 
-    docker build -t turnt -f client/Dockerfile client
+    docker build -t rb -f client/Dockerfile client
     export PIVOT_URL=http://localhost/sub/48a6a147c5474f7e89229072eb02473c
-    docker run --rm -it --net="host" -e SERVER_ADDRESS=$PIVOT_URL turnt
+    docker run --rm -it --net="host" -e SERVER_ADDRESS=$PIVOT_URL rb
 
 One could easily develop its own client to retrieve data from the RoundBroker servers.
 
@@ -73,4 +73,4 @@ One could easily develop its own client to retrieve data from the RoundBroker se
    2.3. create a generic consumer (remember its `uuid` later refered as `$consumer_uuid` )
    3. send webcalls to `http://localhost/p/$producer_uuid/your/custom/path`
    4. consume webcalls by visiting in SSE `http://localhost/c` with header `X-CONSUMER-UUID=$consumer_uuid`
-   
+
