@@ -45,34 +45,34 @@
 	</ul>
 
       </div>
-      <div id="consumers" class="6u 12u$(mobile)">	
-	<header>
-	  <h2>Consumers <a href="{{ url_for('web.create_consumer', pivot_uuid=pivot.uuid) }}"><i class="fa fa-plus"></i></a></h2>
-	</header>
-	{% for consumer in pivot.consumers %}
-	<div class="panel panel-primary">
-	  <div class="panel-heading">
-	    <h3 class="panel-title pull-left">Consumer #{{ consumer.id }}</h3>
-	    <span class="menu">
-	      <a href="#"><i class="fa fa-pencil"></i></a>
-	      <a href="#"><i class="fa fa-trash"></i></a>
-	      </span>
-	  </div>
-	  <div class="panel-body">
-	    <p>
-	      <ul>
-		<li><strong>URL: </strong> {{ consumer.url }}</li>
-
-	      </ul>
-	    </p>
-	  </div>
-	</div>
-	{% endfor %}
+      <div id="consumers" class="6u 12u$(mobile)">
+  <header>
+    <h2>Consumers <a href="{{ url_for('web.create_consumer', pivot_uuid=pivot.uuid) }}"><i class="fa fa-plus"></i></a></h2>
+  </header>
+  {% for consumer in pivot.consumers %}
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3 class="panel-title pull-left">Consumer #{{ consumer.id }}</h3>
+      <span class="menu">
+        <a href="#"><i class="fa fa-pencil"></i></a>
+        <a href="#"><i class="fa fa-trash"></i></a>
+        </span>
+    </div>
+    <div class="panel-body">
+      <p>
+        <ul>
+          <li>export RB_CONSUMER_UUID={{ consumer.uuid }}</li>
+          <li>export RB_SERVER_ADDRESS={{ consumer.root_url }}</li>
+        </ul>
+      </p>
+    </div>
+  </div>
+  {% endfor %}
 
       </div>
     </div>
   </div>
-  
+
 </section>
 
 <section id="live" class="four">
