@@ -1,2 +1,2 @@
 build:
-	docker build -t turnt -f Dockerfile .
+	docker build -t rb -f Dockerfile .

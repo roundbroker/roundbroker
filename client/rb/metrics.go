@@ -1,4 +1,4 @@
-package turnt
+package rb
 
 import "github.com/prometheus/client_golang/prometheus"
 
@@ -8,7 +8,7 @@ var (
 	// RequestCount is the total count of request from the start of the application.
 	RequestCount = prometheus.NewCounter(
 		prometheus.CounterOpts{
-			Name: "turnt_received_request_count",
+			Name: "roundbroker_received_request_count",
 			Help: "Count the number of job request received",
 		},
 	)
@@ -17,7 +17,7 @@ var (
 	// "Method"
 	APIRequestDuration = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
-			Name: "turnt_api_request_sent_duration_seconds",
+			Name: "roundbroker_api_request_sent_duration_seconds",
 			Help: "Duration of the requests forwarded to the destination",
 		},
 		[]string{"Method"},
@@ -28,14 +28,14 @@ var (
 	// JobGauge is the queue counter. It counts job waiting to be dispatched to workers.
 	JobGauge = prometheus.NewGauge(
 		prometheus.GaugeOpts{
-			Name: "turnt_waiting_jobs_count",
+			Name: "roundbroker_waiting_jobs_count",
 			Help: "Number jobs waiting to be handled",
 		},
 	)
 	// WorkerGauge is the gauge to count worker waiting for jobs to be dispatched to them.
 	WorkerGauge = prometheus.NewGauge(
 		prometheus.GaugeOpts{
-			Name: "turnt_workers_available_count",
+			Name: "roundbroker_workers_available_count",
 			Help: "Number of workers available to handle jobs",
 		},
 	)

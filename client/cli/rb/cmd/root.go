@@ -15,17 +15,17 @@ var cfgFile string
 // envDoc is the list of environment variable that you want to document
 var envDoc map[string]string
 
-const serviceName = "turnt"
+const serviceName = "rb"
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "turnt",
-	Short: "Turnt is the client in the private network that retrieve request and replay them locally",
+	Use:   "rb",
+	Short: "rb is the client in the private network that retrieve request and replay them locally",
 	Long: `
 This application retrieve requests from the lower part of the diode and send them to the highest component (your private and protected API server)
 This private API server is something on your network that you don't want to be publicly accessible. But you also need it to be able to receive requests from another network.
 
-turnt is here to help you achieve this goal.`,
+rb is here to help you achieve this goal.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	//	Run: func(cmd *cobra.Command, args []string) { },
@@ -57,11 +57,12 @@ func rc(key, env string, defVal interface{}, doc bool) {
 func initConfig() {
 	envDoc = make(map[string]string)
 
-	rc("verbose", "VERBOSE", false, true)
-	rc("consumer.uuid", "CONSUMER_UUID", "", true)
-	rc("server.address", "SERVER_ADDRESS", "https://apiturntables.io/c", true)
-	rc("destination.service.url", "DESTINATION_SERVICE_URL", "http://yourAPI.local/v1/test", true)
-	rc("workers", "WORKERS", 4, true)
+	rc("verbose", "RB_VERBOSE", false, true)
+	rc("consumer.uuid", "RB_CONSUMER_UUID", "", true)
+	rc("server.address", "RB_SERVER_ADDRESS", "https://roundbroker.io/c", true)
+	rc("destination.service.url", "RB_DESTINATION_SERVICE_URL", "http://yourAPI.local/v1/test", true)
+	rc("workers", "RB_WORKERS", 4, true)
+	rc("metrics.address", "RB_METRICS_ADDRESS", ":9348", true)
 
 	viper.Set("serviceName", serviceName)
 

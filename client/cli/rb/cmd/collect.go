@@ -15,8 +15,8 @@ import (
 	"github.com/prometheus/log"
 	"github.com/twinj/uuid"
 
-	"github.com/gbossert/APITurntable/client/sse"
-	"github.com/gbossert/APITurntable/client/turnt"
+	"github.com/roundbroker/roundbroker/client/rb"
+	"github.com/roundbroker/roundbroker/client/sse"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -24,29 +24,29 @@ import (
 // collectCmd represents the collect command
 var collectCmd = &cobra.Command{
 	Use:   "collect",
-	Short: "collect is the command that allows to retrieve API Calls from apiturntables.io and forward them to the underlying service",
+	Short: "collect is the command that allows to retrieve API Calls from roundbroker.io and forward them to the underlying service",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		logrus.Infof("Starting SSE client to server %q. Redirecting requests to %q", viper.GetString("server.address"), viper.GetString("destination.service.url"))
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
-		go exposeMetrics(":8080", "/metrics")
+		go exposeMetrics(viper.GetString("metrics.address"), "/metrics")
 
 		// create workers channel. This chan is used to announce that a worker can accept jobs
-		workers := make(chan chan turnt.Job, viper.GetInt("workers"))
-		stchan := make(chan turnt.Job)
+		workers := make(chan chan rb.Job, viper.GetInt("workers"))
+		stchan := make(chan rb.Job)
 
 		// start workers. Number of parallel workers is set by WORKER env variable
 		for i := 0; i < viper.GetInt("workers"); i++ {
-			go turnt.Worker{StoreIDs: stchan}.Start(workers)
+			go rb.Worker{StoreIDs: stchan}.Start(workers)
 		}
-		go turnt.StoreRequestID(ctx, stchan)
+		go rb.StoreRequestID(ctx, stchan)
 
 		// create jobs channel to pass jobs around
-		jobs := make(chan turnt.Job, 1000)
+		jobs := make(chan rb.Job, 1000)
 
 		// Dispatch is the function that collect jobs and assign workers to do the task
-		go turnt.Dispatch(jobs, workers)
+		go rb.Dispatch(jobs, workers)
 
 		// create events channel (sse client)
 		re := make(chan *sse.Event, 1000)
@@ -107,9 +107,9 @@ var collectCmd = &cobra.Command{
 					headers[k] = []string{v}
 				}
 
-				j := turnt.Job{
+				j := rb.Job{
 					ID: content.ID,
-					Request: turnt.Request{
+					Request: rb.Request{
 						ID:      uuid.NewV4().String(),
 						Method:  c.Request.Method,
 						Headers: headers,
@@ -121,17 +121,17 @@ var collectCmd = &cobra.Command{
 				logrus.Debugf("[JOB]: %v", j)
 				jobs <- j
 
-				turnt.JobGauge.Inc()
-				turnt.RequestCount.Inc()
+				rb.JobGauge.Inc()
+				rb.RequestCount.Inc()
 			}
 
 			// ---------------------------------------------
 			// Test code
 			// ---------------------------------------------
 			// headers := make(map[string][]string)
-			// jobs <- turnt.Job{
+			// jobs <- rb.Job{
 			// 	ID: uuid.NewV4().String(),
-			// 	Request: turnt.Request{
+			// 	Request: rb.Request{
 			// 		ID:      "test",
 			// 		Method:  "GET",
 			// 		Headers: headers,
@@ -140,8 +140,8 @@ var collectCmd = &cobra.Command{
 			// 	},
 			// 	StartDate: time.Now(),
 			// }
-			// turnt.JobGauge.Inc()
-			// turnt.RequestCount.Inc()
+			// rb.JobGauge.Inc()
+			// rb.RequestCount.Inc()
 			// time.Sleep(10 * time.Millisecond)
 			// ---------------------------------------------
 			// End of Test code
@@ -152,8 +152,7 @@ var collectCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(collectCmd)
-	// collectCmd.Flags().StringP("url", "u", "http://turntable.io/", "Url used to collect the API's request to replay")
-	// collectCmd.Flags().StringP("target-type", "t", "final", `Type of destination. It can be "final" for proxying request or another supported type (ex: rabbitmq, redis, another apiturntable server, etc.)`)
+	// collectCmd.Flags().StringP("url", "u", "http://roundbroker.io/c", "Url used to collect the API's request to replay")
 	collectCmd.Flags().StringP("server", "s", "", "This set the pivot URL where you need to retrieve query to replay locally")
 	viper.BindPFlag("server.address", collectCmd.Flags().Lookup("server"))
 
@@ -164,10 +163,10 @@ func init() {
 	viper.BindPFlag("collect.offset", collectCmd.Flags().Lookup("offset"))
 
 	prometheus.MustRegister(
-		turnt.WorkerGauge,
-		turnt.RequestCount,
-		turnt.JobGauge,
-		turnt.APIRequestDuration,
+		rb.WorkerGauge,
+		rb.RequestCount,
+		rb.JobGauge,
+		rb.APIRequestDuration,
 	)
 }
 
@@ -175,7 +174,7 @@ func createSSERequest() {
 	lastReqID := viper.GetString("collect.offset")
 	var err error
 	if lastReqID == "" {
-		lastReqID, err = turnt.LoadRequestID()
+		lastReqID, err = rb.LoadRequestID()
 		if err != nil {
 			logrus.WithField("err", err).Infof("Failed to read the store file of the consumed eventsID. If it doesn't exist, it will be created at with the first event received.")
 		}
