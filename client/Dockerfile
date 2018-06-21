@@ -12,6 +12,7 @@ RUN cd ${path} && \
 
 FROM alpine:3.7
 
+RUN apk add --no-cache ca-certificates
 COPY --from=builder /go/bin/rb /rb
 
 CMD ["/rb", "collect"]
