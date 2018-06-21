@@ -1,12 +1,14 @@
 package rb
 
 import (
+	"crypto/tls"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/spf13/viper"
 	"github.com/twinj/uuid"
 )
 
@@ -62,9 +64,11 @@ func (w Worker) Start(workers chan chan Job) {
 						req.Header.Add(k, val)
 					}
 				}
+
 				// send requests
+				client := getClient(viper.GetBool("tls.insecure"))
 				reqStart := time.Now()
-				resp, err := http.DefaultClient.Do(req)
+				resp, err := client.Do(req)
 				if err != nil {
 					f["error"] = err
 					logrus.WithFields(f).Errorf("Failed to forward the request to the server")
@@ -90,4 +94,19 @@ func (w Worker) Start(workers chan chan Job) {
 			}
 		}
 	}()
+}
+
+func getClient(insecure bool) *http.Client {
+	var client *http.Client
+	if insecure {
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		}
+		client = &http.Client{Transport: tr}
+	} else {
+		client = http.DefaultClient
+	}
+	return client
 }

@@ -162,6 +162,9 @@ func init() {
 	collectCmd.Flags().StringP("offset", "o", "", "Offset at which you want to start collect from")
 	viper.BindPFlag("collect.offset", collectCmd.Flags().Lookup("offset"))
 
+	collectCmd.Flags().BoolP("insecure", "k", false, "By default every request is made in a secure way to your internal applications. If you have self-signed certificate. no support for custom CA is currently done. You'd have to build your own docker image.")
+	viper.BindPFlag("tls.insecure", collectCmd.Flags().Lookup("insecure"))
+
 	prometheus.MustRegister(
 		rb.WorkerGauge,
 		rb.RequestCount,
