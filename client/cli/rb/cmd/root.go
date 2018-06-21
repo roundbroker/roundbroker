@@ -63,6 +63,7 @@ func initConfig() {
 	rc("destination.service.url", "RB_DESTINATION_SERVICE_URL", "http://yourAPI.local/v1/test", true)
 	rc("workers", "RB_WORKERS", 4, true)
 	rc("metrics.address", "RB_METRICS_ADDRESS", ":9348", true)
+	rc("tls.insecure", "RB_TLS_INSECURE", false, true)
 
 	viper.Set("serviceName", serviceName)
 
