@@ -1,7 +1,7 @@
 package rb
 
 import (
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 // Dispatch send job request to workers
