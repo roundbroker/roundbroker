@@ -5,9 +5,8 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
-
-	"github.com/prometheus/log"
 )
 
 //SSE name constants
@@ -63,13 +62,11 @@ func Notify(uri string, evCh chan<- *Event) error {
 
 	req, err := liveReq("GET", uri, nil)
 	if err != nil {
-		log.Fatalf("error getting sse request: %v", err)
 		return fmt.Errorf("error getting sse request: %v", err)
 	}
 
 	res, err := Client.Do(req)
 	if err != nil {
-		log.Fatalf("error performing request for %v: %v", uri, err)
 		return fmt.Errorf("error performing request for %s: %v", uri, err)
 	}
 
@@ -85,7 +82,6 @@ func Notify(uri string, evCh chan<- *Event) error {
 		bs, err := br.ReadBytes('\n')
 
 		if err != nil && err != io.EOF {
-			log.Errorf("Failed to read content from SSE channel: %v", err)
 			return err
 		}
 
@@ -117,6 +113,5 @@ func Notify(uri string, evCh chan<- *Event) error {
 			break
 		}
 	}
-
 	return nil
 }

@@ -9,10 +9,10 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/prometheus/log"
+	"github.com/sirupsen/logrus"
 	"github.com/twinj/uuid"
 
 	"github.com/roundbroker/roundbroker/client/rb"
@@ -51,7 +51,12 @@ var collectCmd = &cobra.Command{
 		// create events channel (sse client)
 		re := make(chan *sse.Event, 1000)
 		createSSERequest()
-		go sse.Notify(viper.GetString("server.address"), re)
+		go func() {
+			err := sse.Notify(viper.GetString("server.address"), re)
+			if err != nil {
+				logrus.WithError(err).Errorf("An error happened with the SSE request")
+			}
+		}()
 
 		baseURL, err := url.Parse(viper.GetString("destination.service.url"))
 		if err != nil {
