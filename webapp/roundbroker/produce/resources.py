@@ -39,7 +39,7 @@ def produce(producer_uuid, extra_path=None):
 
         httpreq = WebCallRequestHttp11(
             method=request.method,
-            headers={k: v for k, v in request.headers.items()},
+            headers={k: v for k, v in headers.items()},
             cookies=request.cookies,
             body=json.dumps(payload),
             source_ip=request.remote_addr,
