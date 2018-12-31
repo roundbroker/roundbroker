@@ -31,7 +31,7 @@ def produce(producer_uuid, extra_path=None):
         payload = request.get_json(silent=True,force=True)
         # add gravatar url (we assume that we have a slack/mattermost query)
         if payload is None:
-            payload = json.loads(request.values['payload']))
+            payload = json.loads(request.values['payload'])
         payload['icon_url'] = gravatar_url
 
         headers = {k: v for k, v in request.headers.items()}
