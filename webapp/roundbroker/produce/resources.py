@@ -27,13 +27,10 @@ def produce(producer_uuid, extra_path=None):
         username = "turntable"
         gravatar_url = "https://www.gravatar.com/avatar/{}".format(hashlib.md5(username.encode('utf-8')).hexdigest())
 
-        # lets transform this message into a mattermost query
-        payload = {
-            "channel": "platform-changes",
-            "username": username,
-            "icon_url": gravatar_url,
-            "text": request.get_data(as_text=True)
-        }
+        # http://flask.pocoo.org/docs/1.0/api/#flask.Request
+        payload = request.get_json(silent=True,force=True)
+        # add gravatar url (we assume that we have a slack/mattermost query)
+        payload['icon_url'] = gravatar_url
 
         headers = {k: v for k, v in request.headers.items()}
         headers['Content-Type'] = 'application/json'
