@@ -11,7 +11,6 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/prometheus/log"
 	"github.com/sirupsen/logrus"
 	"github.com/twinj/uuid"
 
@@ -60,7 +59,7 @@ var collectCmd = &cobra.Command{
 
 		baseURL, err := url.Parse(viper.GetString("destination.service.url"))
 		if err != nil {
-			log.Fatalf("Failed to parse destination service URL as valid URL: %v", viper.GetString("destination.service.url"))
+			logrus.Fatalf("Failed to parse destination service URL as valid URL: %v", viper.GetString("destination.service.url"))
 		}
 
 		// main loop. This loop retrieve requests from sse server and pass them to the
@@ -86,14 +85,14 @@ var collectCmd = &cobra.Command{
 
 				data, err := ioutil.ReadAll(content.Data)
 				if err != nil {
-					log.Errorf("Failed to read data from input message: %v", err)
+					logrus.Errorf("Failed to read data from input message: %v", err)
 					continue
 				}
 				logrus.Debugf("[RAW CONTENT]: %v", string(data))
 
 				err = json.Unmarshal(data, &c)
 				if err != nil {
-					log.Errorf("Failed to decode body content as json response: %v", err)
+					logrus.Errorf("Failed to decode body content as json response: %v", err)
 					continue
 				}
 				logrus.Debugf("[PARSED STRUCT]: %v", c)
@@ -101,7 +100,7 @@ var collectCmd = &cobra.Command{
 				// parse extrapath and add query arguments
 				extraPath, err := url.Parse(c.Request.ExtraPath)
 				if err != nil {
-					log.Errorf(`Failed to decode "extra_path" as valid path. %q`, c.Request.ExtraPath)
+					logrus.Errorf(`Failed to decode "extra_path" as valid path. %q`, c.Request.ExtraPath)
 					continue
 				}
 				extraPath.RawQuery = c.Request.Args
@@ -207,5 +206,5 @@ func createSSERequest() {
 
 func exposeMetrics(addr string, path string) {
 	http.Handle(path, promhttp.Handler())
-	log.Fatal(http.ListenAndServe(addr, nil))
+	logrus.Fatal(http.ListenAndServe(addr, nil))
 }
